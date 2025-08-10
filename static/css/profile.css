@@ -1,10 +1,9 @@
 /* Estilos generales para el layout de la página de perfil */
-
 .profile-page-container {
     max-width: 1200px;
     margin: 40px auto;
     padding: 20px;
-    background-color: #f0f2f5; /* Fondo gris claro */
+    background-color: #f0f2f5;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -15,7 +14,7 @@
 .profile-header-card {
     display: flex;
     align-items: center;
-    background-color: #0A2540; /* Azul oscuro */
+    background-color: #0A2540;
     color: white;
     padding: 30px;
     border-radius: 12px;
@@ -48,7 +47,13 @@
     line-height: 1.2;
 }
 
-.profile-fullname, .profile-location, .profile-birthday, .profile-nickname, .profile-age {
+.profile-fullname {
+    font-size: 1.1rem;
+    margin: 5px 0;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.profile-location {
     font-size: 1.1rem;
     margin: 5px 0;
     display: flex;
@@ -56,27 +61,10 @@
     color: rgba(255, 255, 255, 0.8);
 }
 
-.profile-location .icon, .profile-birthday .icon {
+.profile-location .icon {
     font-size: 1.2rem;
     margin-right: 8px;
-}
-
-.profile-about-me {
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.profile-about-me h4 {
-    font-size: 1.2rem;
-    margin-bottom: 5px;
-    color: white;
-}
-
-.profile-about-me p {
-    font-size: 1rem;
-    line-height: 1.5;
-    color: rgba(255, 255, 255, 0.9);
+    color: #CFA854;
 }
 
 /* Contenido inferior (grid) */
@@ -92,16 +80,25 @@
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    display: block; /* Asegura que la tarjeta sea un bloque para un correcto apilamiento vertical */
 }
 
 .profile-section-card h3 {
     font-size: 1.5rem;
     font-weight: 600;
     margin-top: 0;
-    margin-bottom: 15px;
-    color: #1a2a4b;
-    border-bottom: 2px solid #CFA854; /* Línea dorada */
-    padding-bottom: 10px;
+    margin-bottom: 10px;
+    color: #0A2540;
+    text-align: left;
+    display: block; /* Asegura que el título ocupe su propia línea */
+}
+
+/* Separador de línea para las secciones */
+.section-divider {
+    border: none;
+    height: 2px;
+    background-color: #CFA854;
+    margin: 0 0 20px 0;
 }
 
 /* Recetas favoritas */
@@ -142,6 +139,7 @@
     font-size: 1rem;
     font-weight: 600;
     margin: 0 0 5px 0;
+    color: #0A2540;
 }
 
 .recipe-card-author {
@@ -168,36 +166,76 @@
     gap: 20px;
 }
 
-/* Sección de contacto */
-.contact-card .contact-list {
+/* Sección de Información y Contacto */
+.contact-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.info-contact-list {
     list-style: none;
     padding: 0;
     margin: 0;
+    display: block; /* Asegura que la lista ocupe su propia línea */
 }
 
-.contact-card .contact-list li {
+/* Estilo para los elementos de la lista de contacto. Con líneas divisorias */
+.info-contact-list li {
+    padding: 10px 0;
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
+    border-bottom: 1px solid #e0e0e0; /* Línea divisoria inferior */
 }
 
-.contact-card .contact-list .icon {
-    margin-right: 10px;
+.info-contact-list li:last-child {
+    border-bottom: none; /* Eliminar la línea del último elemento */
+}
+
+.info-contact-list li .icon {
     font-size: 1.2rem;
-    color: #CFA854;
+    margin-right: 10px;
+    color: #0A2540;
 }
 
-.contact-card .contact-list .contact-label {
+.info-contact-list li .contact-label {
     font-size: 1rem;
+    color: #0A2540;
 }
+
+/* Sección "Acerca de mí" */
+.about-me-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    margin-bottom: 20px;
+}
+
+.about-me-card p {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #555;
+    margin-top: 0;
+}
+
 
 /* Sección de comentarios */
+.comments-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
 .comments-list {
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
+/* Estilo de tarjeta para los elementos de la lista de comentarios */
 .comments-list li {
     background-color: #fafafa;
     border-radius: 8px;
@@ -257,7 +295,7 @@
 }
 
 .view-all-comments-button:hover {
-    background-color: #1A3A5A;
+    background-color: #1a3c63;
 }
 
 /* Media Queries para diseño responsivo */
@@ -279,10 +317,6 @@
     }
     .profile-avatar-wrapper {
         margin: 0 0 15px 0;
-    }
-    .profile-about-me {
-        margin-top: 10px;
-        padding-top: 10px;
     }
     .profile-section-card h3 {
         font-size: 1.3rem;

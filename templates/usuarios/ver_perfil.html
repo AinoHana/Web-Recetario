@@ -4,8 +4,6 @@
 {% block title %}Perfil de {{ user.username }} - El Recetario{% endblock title %}
 
 {% block extra_head %}
-    <!-- Esta línea cargará el archivo CSS en el bloque que definiste en base.html -->
-    <!-- Asegúrate de que el archivo profile.css esté en la ruta: static/css/profile.css -->
     <link rel="stylesheet" href="{% static 'css/profile.css' %}">
 {% endblock %}
 
@@ -24,14 +22,6 @@
             <div class="profile-info-main">
                 <h2 class="profile-username">{{ user.username }}</h2>
                 <p class="profile-fullname">{{ user.first_name }} {{ user.last_name }}</p>
-
-                {% if perfil.fecha_nacimiento and perfil.mostrar_cumpleanos %}
-                    <p class="profile-birthday">
-                        <span class="icon">&#127874;</span> {# Icono de cumpleaños #}
-                        Cumpleaños: {{ perfil.fecha_nacimiento|date:"d M" }}
-                    </p>
-                {% endif %}
-
                 {% if perfil.localidad or perfil.pais %}
                     <p class="profile-location">
                         <span class="icon">&#128205;</span> {# Icono de ubicación #}
@@ -40,32 +30,15 @@
                         {% if perfil.pais %}{{ perfil.pais }}{% endif %}
                     </p>
                 {% endif %}
-                
-                {% if perfil.nickname %}
-                    <p class="profile-nickname">@{{ perfil.nickname }}</p>
-                {% endif %}
-
-                {% if perfil.edad and perfil.mostrar_edad %}
-                    <p class="profile-age">
-                        <span class="icon">&#128100;</span> {# Icono de edad #}
-                        Edad: {{ perfil.edad }} años
-                    </p>
-                {% endif %}
-
-                {% if perfil.acerca_de_mi %}
-                    <div class="profile-about-me">
-                        <h4>Acerca de mí:</h4>
-                        <p>{{ perfil.acerca_de_mi|linebreaksbr }}</p>
-                    </div>
-                {% endif %}
             </div>
         </div>
 
-        {# Secciones Inferiores #}
+        {# Secciones Inferiores en una cuadrícula de dos columnas #}
         <div class="profile-content-grid">
-            {# Sección de Recetas Favoritas #}
+            {# Sección de Recetas Favoritas (Columna Izquierda) #}
             <div class="profile-section-card favorite-recipes-card">
                 <h3>Recetas Favoritas ({{ recetas_favoritas.count }})</h3>
+                <hr class="section-divider">
                 <div class="recipe-cards-container">
                     {% if favoritos_por_categoria %}
                         {% for categoria_nombre, recetas_en_categoria in favoritos_por_categoria.items %}
@@ -86,11 +59,31 @@
                 </div>
             </div>
 
+            {# Columna de la derecha para Información y Comentarios #}
             <div class="right-column-sections">
-                {# Sección de Contacto #}
+                {# Sección de Información y Contacto como una tarjeta completa #}
                 <div class="profile-section-card contact-card">
-                    <h3>Contacto</h3>
-                    <ul class="contact-list">
+                    <h3>Información y Contacto</h3>
+                    <hr class="section-divider">
+                    <ul class="info-contact-list">
+                        {% if perfil.nickname %}
+                            <li>
+                                <span class="icon">&#128100;</span>
+                                <span class="contact-label">@{{ perfil.nickname }}</span>
+                            </li>
+                        {% endif %}
+                        {% if perfil.edad and perfil.mostrar_edad %}
+                            <li>
+                                <span class="icon">&#128100;</span>
+                                <span class="contact-label">Edad: {{ perfil.edad }} años</span>
+                            </li>
+                        {% endif %}
+                        {% if perfil.fecha_nacimiento and perfil.mostrar_cumpleanos %}
+                            <li>
+                                <span class="icon">&#127874;</span>
+                                <span class="contact-label">Cumpleaños: {{ perfil.fecha_nacimiento|date:"d M" }}</span>
+                            </li>
+                        {% endif %}
                         <li>
                             <span class="icon">&#128241;</span>
                             <span class="contact-label">Móvil</span>
@@ -105,10 +98,20 @@
                         </li>
                     </ul>
                 </div>
+                
+                {# Sección "Acerca de mí" como una tarjeta separada #}
+                {% if perfil.acerca_de_mi %}
+                    <div class="profile-section-card about-me-card">
+                        <h3>Acerca de mí</h3>
+                        <hr class="section-divider">
+                        <p>{{ perfil.acerca_de_mi|linebreaksbr }}</p>
+                    </div>
+                {% endif %}
 
                 {# Sección de Últimos Comentarios #}
                 <div class="profile-section-card comments-card">
                     <h3>Últimos Comentarios ({{ ultimos_comentarios.count }})</h3>
+                    <hr class="section-divider">
                     {% if ultimos_comentarios %}
                         <ul class="comments-list">
                             {% for comentario in ultimos_comentarios %}
@@ -126,10 +129,10 @@
                                 </li>
                             {% endfor %}
                         </ul>
+                        <a href="#" class="view-all-comments-button">Ver todos los comentarios</a>
                     {% else %}
                         <p>Este usuario aún no ha dejado ningún comentario.</p>
                     {% endif %}
-                    <a href="#" class="view-all-comments-button">Ver todos los comentarios</a>
                 </div>
             </div>
         </div>
