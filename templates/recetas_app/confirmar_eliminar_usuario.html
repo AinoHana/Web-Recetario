@@ -1,0 +1,11 @@
+<h2 class="mb-3">Confirmar Eliminación</h2>
+<div class="alert alert-warning">
+    <p>¿Estás seguro de que quieres eliminar al usuario **{{ usuario.username }}**?</p>
+    <p>¡Esta acción es irreversible!</p>
+</div>
+
+<form method="post" action="{% url 'recetas_app:eliminar_usuario' usuario.pk %}" class="d-inline-block">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger me-2">Sí, eliminar</button>
+</form>
+<a href="#" class="btn btn-secondary" data-url="{% url 'recetas_app:admin_usuarios' %}" data-action="view-list">Cancelar</a>

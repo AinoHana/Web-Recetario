@@ -1,0 +1,16 @@
+<h2 class="mb-3">Editar Usuario: {{ usuario.username }}</h2>
+
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<form method="post" action="{% url 'recetas_app:editar_usuario' usuario.pk %}" class="needs-validation" novalidate>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Guardar Cambios</button>
+    <a href="#" class="btn btn-secondary" data-url="{% url 'recetas_app:admin_usuarios' %}" data-action="view-list">Cancelar</a>
+</form>

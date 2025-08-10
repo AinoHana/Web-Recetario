@@ -279,3 +279,176 @@ tr:nth-child(even) {
     background-color: #0056b3;
 }
 
+.btn.btn-primary.mb-3 {
+        background-color: #0A2540;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    border: 2px solid var(--golden-border);
+}
+
+.btn.btn-primary.mb-3:hover {
+    background-color: #0056b3;
+}
+
+.btn.btn-sm.btn-danger {
+    background-color: #dc3545;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    border: none;
+}
+
+.btn.btn-sm.btn-danger:hover {
+    background-color: #c82333;
+}
+
+.btn.btn-sm.btn-info.me-2 {
+    background-color: #0A2540;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    border: none;
+}
+
+.btn.btn-sm.btn-info.me-2:hover {
+    background-color: #0056b3;
+}
+
+/* ESTILOS PARA FORMULARIOS EN EL PANEL ADMIN */
+
+.admin-container form p {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+.admin-container form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+}
+
+.admin-container form input[type="text"],
+.admin-container form input[type="email"],
+.admin-container form input[type="password"] {
+    width: 100%;
+    max-width: 400px;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.admin-container form input[type="text"]:focus,
+.admin-container form input[type="email"]:focus,
+.admin-container form input[type="password"]:focus {
+    border-color: var(--golden-border);
+    outline: none;
+}
+
+/* Estilos para los campos de selección múltiple (Grupos y Permisos) */
+.admin-container form select[multiple] {
+    width: 100%;
+    max-width: 400px;
+    height: 150px; /* Ajusta la altura para que sea fácil de usar */
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 1rem;
+    padding: 0.5rem;
+}
+
+.admin-container form select[multiple] option:checked {
+    background-color: var(--primary-color);
+    color: var(--white-text);
+}
+
+/* Estilos para el campo de "Último ingreso" */
+.admin-container form p input.vTextField {
+    width: auto;
+    max-width: none;
+}
+
+/* Estilos para el botón de "Restablecer contraseña" */
+.admin-container form a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.admin-container form a:hover {
+    text-decoration: underline;
+}
+
+/* Estilos para la descripción de los campos (la letra pequeña) */
+.admin-container form .help, .admin-container form .helptext {
+    font-size: 0.875rem;
+    color: #666;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+/* Estilos para los mensajes de error */
+.admin-container form .errorlist {
+    color: #dc3545;
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 5px;
+}
+
+/* Estilos para los mensajes de Django (si los hay) */
+.messages {
+    list-style-type: none;
+    padding: 0;
+    margin-bottom: 1rem;
+}
+
+.messages .success {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.btn.btn-success{
+    background-color: #0A2540;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    border: 2px solid var(--golden-border);
+}
+
+.btn.btn-success:hover{
+    background-color: #0056b3;
+}
+
+.messages .error {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.btn.btn-secondary{ 
+    background-color: #0A2540;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    border: none;
+}
+
+.btn.btn-secondary:hover {
+    background-color: #0056b3;
+}
