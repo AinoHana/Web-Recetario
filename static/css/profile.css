@@ -1,0 +1,198 @@
+/* ========================================= */
+/* Estilos para la Página de Perfil de Usuario */
+/* ========================================= */
+
+/* Contenedor principal de la página de perfil */
+.profile-page-container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 2rem auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* Sección superior del perfil (Tarjeta de encabezado) */
+.profile-header-card {
+    background-color: var(--primary-color);
+    color: var(--white-text);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    position: relative;
+    gap: 2rem;
+}
+
+/* Contenedor del avatar y el borde dorado */
+.profile-avatar-wrapper {
+    position: relative;
+    border: 4px solid var(--golden-border);
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    z-index: 2;
+}
+
+/* Imagen del avatar */
+.profile-avatar {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Información principal del usuario */
+.profile-info-main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.profile-username {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--white-text);
+}
+
+.profile-fullname,
+.profile-nickname,
+.profile-location,
+.profile-birthday,
+.profile-age {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Estilos para la sección "Acerca de mí" */
+.profile-about-me {
+    margin-top: 1rem;
+    max-width: 600px;
+}
+
+.profile-about-me h4 {
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--white-text);
+    margin-bottom: 0.5rem;
+}
+
+.profile-about-me p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.7);
+    white-space: pre-line; /* Mantiene saltos de línea */
+}
+
+/* Botón de editar perfil */
+.profile-edit-button {
+    background-color: var(--golden-border);
+    color: var(--primary-color);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-top: 1.5rem;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.profile-edit-button:hover {
+    background-color: #e6b96e;
+    transform: translateY(-2px);
+}
+
+/* Sección de contenido inferior */
+.profile-content-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+}
+
+@media (max-width: 768px) {
+    .profile-content-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Estilos para las tarjetas de sección */
+.profile-section-card {
+    background-color: var(--white-text);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile-section-card h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--golden-border);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Lista compacta de favoritos y comentarios */
+.favorites-list-compact,
+.comments-list-compact {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.favorites-list-compact li,
+.comments-list-compact li {
+    margin-bottom: 1rem;
+}
+
+.favorites-list-compact a,
+.comments-list-compact a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.favorites-list-compact a:hover,
+.comments-list-compact a:hover {
+    text-decoration: underline;
+}
+
+/* Estilos específicos para los comentarios */
+.comment-compact-text {
+    font-style: italic;
+    color: var(--text-color);
+    margin-bottom: 0.25rem;
+}
+
+.comment-compact-info {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+/* Botón "Ver todos los comentarios" */
+.view-all-comments-button {
+    background-color: transparent;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-top: 1rem;
+    display: inline-block;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.view-all-comments-button:hover {
+    background-color: var(--primary-color);
+    color: var(--white-text);
+}

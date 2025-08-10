@@ -168,7 +168,7 @@ def detalle_receta(request, pk):
     comentarios_principales = Comentario.objects.filter(
         receta=receta,
         respuesta_a__isnull=True
-    ).order_by('fecha_publicacion')
+    ).order_by('fecha_creacion')
 
     if request.method == 'POST':
         if not request.user.is_authenticated:
