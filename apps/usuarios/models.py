@@ -5,7 +5,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
 
-# Modelo de Perfil de Usuario    
+# Modelo de Perfil de Usuario    
 class Perfil(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
@@ -76,3 +76,11 @@ def save_user_profile(sender, instance, **kwargs):
         instance.perfil.save()
     else:
         Perfil.objects.create(user=instance)
+
+# Agrega la función is_admin al final del archivo
+def is_admin(user):
+    """
+    Comprueba si el usuario está autenticado y tiene permisos de staff.
+    """
+    return user.is_authenticated and user.is_staff
+

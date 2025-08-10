@@ -1,0 +1,50 @@
+<div class="card p-4">
+    <h2 class="text-xl font-bold mb-4">Administrar Usuarios</h2>
+    <p class="text-gray-600 mb-6">Gestiona los usuarios de la plataforma, crea nuevos o edita los existentes.</p>
+
+    <div class="mb-4">
+        <a href="{% url 'recetas_app:crear_usuario' %}" class="btn btn-primary" hx-get="{% url 'recetas_app:crear_usuario' %}" hx-target="#content-area" hx-push-url="true">
+            <i class="fas fa-user-plus"></i> Crear Nuevo Usuario
+        </a>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white rounded-lg shadow-md">
+            <thead class="bg-gray-200 text-gray-700 uppercase text-sm">
+                <tr>
+                    <th class="py-3 px-4 text-left">Username</th>
+                    <th class="py-3 px-4 text-left">Email</th>
+                    <th class="py-3 px-4 text-left">Estado</th>
+                    <th class="py-3 px-4 text-left">Acciones</th>
+                </tr>
+            </thead>
+            <tbody class="text-gray-600 text-sm font-light">
+                {% for usuario in usuarios %}
+                <tr class="border-b border-gray-200 hover:bg-gray-100">
+                    <td class="py-3 px-4">{{ usuario.username }}</td>
+                    <td class="py-3 px-4">{{ usuario.email }}</td>
+                    <td class="py-3 px-4">
+                        {% if usuario.is_active %}
+                            <span class="bg-green-200 text-green-600 py-1 px-3 rounded-full text-xs">Activo</span>
+                        {% else %}
+                            <span class="bg-red-200 text-red-600 py-1 px-3 rounded-full text-xs">Inactivo</span>
+                        {% endif %}
+                    </td>
+                    <td class="py-3 px-4">
+                        <a href="{% url 'recetas_app:editar_usuario' usuario.pk %}" class="btn btn-warning btn-sm mr-2" hx-get="{% url 'recetas_app:editar_usuario' usuario.pk %}" hx-target="#content-area" hx-push-url="true">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        <a href="{% url 'recetas_app:eliminar_usuario' usuario.pk %}" class="btn btn-danger btn-sm" hx-get="{% url 'recetas_app:eliminar_usuario' usuario.pk %}" hx-target="#content-area" hx-push-url="true">
+                            <i class="fas fa-trash-alt"></i> Eliminar
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="py-3 px-4 text-center">No hay usuarios registrados.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

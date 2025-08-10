@@ -12,8 +12,8 @@ urlpatterns = [
     path('crear/', views.crear_receta, name='crear_receta'),
     path('previsualizar/', views.previsualizar_receta, name='previsualizar_receta'),
     path('descubre/', views.recetas_aleatorias, name='recetas_aleatorias'),
-    path('categoria/<slug:categoria_slug>/', views.recetas_por_categoria, name='recetas_por_categoria'),
     path('populares/', views.recetas_populares, name='recetas_mas_populares'),
+    path('categoria/<slug:categoria_slug>/', views.recetas_por_categoria, name='recetas_por_categoria'),
 
     # Rutas de Comentarios
     path('comentario/<int:pk>/editar/', views.editar_comentario, name='editar_comentario'),
@@ -30,24 +30,25 @@ urlpatterns = [
     path('categorias/<slug:slug>/editar/', views.editar_categoria, name='editar_categoria'),
     path('categorias/<slug:slug>/eliminar/', views.eliminar_categoria, name='eliminar_categoria'),
 
-    # Rutas de Mensajes Privados 
+    # Rutas de Mensajes Privados
     path('inbox/', views.inbox, name='inbox'),
     path('inbox/<str:username>/', views.private_message, name='private_message'),
 
-    # Ruta para las opciones de administración
+    # Rutas del Panel de Administración
     path('admin/', views.admin_options_view, name='admin_options'),
+    
+    # Rutas AJAX del panel de administración (ahora sin duplicados)
     path('admin/recetas/', views.admin_recetas_ajax, name='admin_recetas'),
     path('admin/categorias/', views.admin_categorias_ajax, name='admin_categorias'),
-    path('admin/usuarios/', views.admin_usuarios_ajax, name='admin_usuarios'),
     path('admin/comentarios/', views.admin_comentarios_ajax, name='admin_comentarios'),
+    
+    # Ruta corregida para la gestión de usuarios
+    path('admin/usuarios/', views.administrar_usuarios, name='admin_usuarios'),
+    path('admin/usuarios/crear/', views.crear_usuario, name='crear_usuario'),
+    path('admin/usuarios/editar/<int:pk>/', views.editar_usuario, name='editar_usuario'),
+    path('admin/usuarios/eliminar/<int:pk>/', views.eliminar_usuario, name='eliminar_usuario'),
 
-    # Ruta para cargar el contenido vía AJAX
-    path('admin/recetas/', views.admin_recetas_ajax, name='admin_recetas_ajax'),
-    path('admin/categorias/', views.admin_categorias_ajax, name='admin_categorias_ajax'),
-    path('admin/usuarios/', views.admin_usuarios_ajax, name='admin_usuarios_ajax'),
-    path('admin/comentarios/', views.admin_comentarios_ajax, name='admin_comentarios_ajax'),
-
-    #RUTAS: Acerca de y Contacto
+    # Rutas para páginas estáticas
     path('acerca-de/', views.acerca_de, name='acerca_de'),
     path('contacto/', views.contacto, name='contacto'),
 ]
