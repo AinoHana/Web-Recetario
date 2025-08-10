@@ -116,8 +116,8 @@
                                         <img src="{% if comentario.usuario.perfil.avatar %}{{ comentario.usuario.perfil.avatar.url }}{% else %}{% static 'img/default_avatar.png' %}{% endif %}" alt="Avatar de {{ comentario.usuario.username }}" class="comment-author-avatar">
                                         <span class="comment-author-name">{{ comentario.usuario.username }}</span>
                                     </div>
-                                    {% if comentario.texto %}
-                                        <p class="comment-text">"{{ comentario.texto|truncatechars:100 }}"</p>
+                                    {% if comentario.contenido %}
+                                        <p class="comment-text">"{{ comentario.contenido|truncatechars:100 }}"</p>
                                     {% else %}
                                         <p class="comment-text">No hay texto para este comentario.</p>
                                     {% endif %}
