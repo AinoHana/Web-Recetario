@@ -3,8 +3,9 @@
 
 {% block title %}Perfil de {{ user.username }} - El Recetario{% endblock title %}
 
-{% block extra_css %}
-    <!-- Asegúrate de que el archivo profile.css esté en la ruta correcta -->
+{% block extra_head %}
+    <!-- Esta línea cargará el archivo CSS en el bloque que definiste en base.html -->
+    <!-- Asegúrate de que el archivo profile.css esté en la ruta: static/css/profile.css -->
     <link rel="stylesheet" href="{% static 'css/profile.css' %}">
 {% endblock %}
 
