@@ -48,7 +48,8 @@
 
             <div class="form-actions">
                 <button type="submit" class="button-primary submit-button">Guardar Categoría</button>
-                <a href="{% url 'recetas_app:lista_categorias' %}" class="button-secondary cancel-button">Cancelar</a>
+                {# Botón de Cancelar corregido para ir a la página anterior #}
+                <button type="button" class="button-secondary cancel-button" onclick="history.back()">Cancelar</button>
             </div>
         </form>
     </div>
