@@ -18,6 +18,7 @@ urlpatterns = [
     # Rutas de Comentarios
     path('comentario/<int:pk>/editar/', views.editar_comentario, name='editar_comentario'),
     path('comentario/<int:pk>/eliminar/', views.eliminar_comentario, name='eliminar_comentario'),
+    path('perfil/mis_comentarios/', views.mis_comentarios, name='mis_comentarios'),
 
     # Rutas de Búsqueda
     path('buscar/', views.simple_search_view, name='simple_search'),
@@ -37,7 +38,7 @@ urlpatterns = [
     # Rutas del Panel de Administración
     path('admin/', views.admin_options_view, name='admin_options'),
     
-    # Rutas AJAX del panel de administración (ahora sin duplicados)
+    # Rutas AJAX del panel de administración
     path('admin/recetas/', views.admin_recetas_ajax, name='admin_recetas'),
     path('admin/categorias/', views.admin_categorias_ajax, name='admin_categorias'),
     path('admin/comentarios/', views.admin_comentarios_ajax, name='admin_comentarios'),
@@ -47,8 +48,10 @@ urlpatterns = [
     path('admin/usuarios/crear/', views.crear_usuario, name='crear_usuario'),
     path('admin/usuarios/editar/<int:pk>/', views.editar_usuario, name='editar_usuario'),
     path('admin/usuarios/eliminar/<int:pk>/', views.eliminar_usuario, name='eliminar_usuario'),
+    
 
     # Rutas para páginas estáticas
     path('acerca-de/', views.acerca_de, name='acerca_de'),
     path('contacto/', views.contacto, name='contacto'),
+    
 ]

@@ -102,7 +102,7 @@ def home(request):
 
     return render(request, 'recetas_app/home.html', context)
 
-# ------------------------------------------------------------------------------------------------------
+
 # --- VISTA: Recetas Populares (Página dedicada con paginación y ordenamiento AJAX) ---
 def recetas_populares(request):
     order_by = request.GET.get('order_by', 'populares') # 'populares' es nuestro campo anotado
@@ -160,7 +160,6 @@ def recetas_populares(request):
 
     return render(request, 'recetas_app/recetas_populares.html', context)
 
-# ------------------------------------------------------------------------------------------------------
 
 # Vista para el detalle de una receta específica
 def detalle_receta(request, pk):
@@ -315,7 +314,6 @@ def advanced_search_view(request):
     }
     return render(request, 'recetas_app/advanced_search.html', context)
 
-# Se elimina la vista 'advanced_search_results_view' ya que está consolidada en 'advanced_search_view'
 
 # Vista: Crear Receta (solo para administradores/staff)
 @login_required
@@ -556,8 +554,7 @@ def eliminar_categoria(request, slug):
     }
     return render(request, 'recetas_app/categoria_confirm_delete.html', context)
 
-# --- VISTAS DEL PANEL DE ADMINISTRACIÓN AJAX (ORIGINALES) ---
-# Estas vistas son solo para peticiones AJAX y renderizan fragmentos HTML.
+# --- VISTAS DEL PANEL DE ADMINISTRACIÓN AJAX ---
 
 @login_required
 @user_passes_test(is_admin, login_url='/admin/login/')
@@ -590,8 +587,7 @@ def admin_comentarios_ajax(request):
     html_content = render_to_string('recetas_app/partials/admin_comentarios_list.html', context, request=request)
     return JsonResponse({'html_content': html_content})
 
-# --- VISTAS DE USUARIO (CORREGIDAS Y CONSOLIDADAS) ---
-# Se elimina la vista 'admin_usuarios_ajax' para usar esta versión corregida
+# --- VISTAS DE USUARIO---
 
 @login_required
 @user_passes_test(is_admin, login_url='/admin/login/')
@@ -654,7 +650,7 @@ def eliminar_usuario(request, pk):
         return JsonResponse({'html_content': html})
 
     return render(request, 'recetas_app/confirmar_eliminar_usuario.html', {'usuario': usuario})
-# --- FIN DE VISTAS DE USUARIO CORREGIDAS ---
+
 
 # Vista para previsualizar una receta antes de publicarla.
 def previsualizar_receta(request):
@@ -815,3 +811,29 @@ def private_message(request, username):
 def admin_panel(request):
     return render(request, 'recetas_app/admin_panel.html')
 
+#Vista "Mis Comentarios"
+@login_required
+def mis_comentarios(request):
+    """
+    Muestra una lista de todos los comentarios realizados por el usuario logueado.
+    """
+    # Se obtienen todos los comentarios del usuario actual y se ordenan por fecha de creación (los más nuevos primero).
+    comentarios = Comentario.objects.filter(autor=request.user).order_by('-fecha_creacion')
+    
+    context = {
+        'comentarios': comentarios
+    }
+    
+    return render(request, 'recetas_app/perfil_mis_comentarios.html', context)
+
+def mis_comentarios(request):
+    """
+    Vista que muestra todos los comentarios del usuario actual.
+    """
+    # Filtra los comentarios para obtener solo los del usuario autenticado
+    comentarios = Comentario.objects.filter(usuario=request.user).order_by('-fecha_creacion')
+    
+    context = {
+        'comentarios': comentarios
+    }
+    return render(request, 'mis_comentarios.html', context)
