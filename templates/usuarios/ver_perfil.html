@@ -129,7 +129,7 @@
                                 </li>
                             {% endfor %}
                         </ul>
-                        <a href="#" class="view-all-comments-button">Ver todos los comentarios</a>
+                        <a href="{% url 'usuarios:mis_comentarios' %}" class="view-all-comments-button">Ver todos los comentarios</a>
                     {% else %}
                         <p>Este usuario aún no ha dejado ningún comentario.</p>
                     {% endif %}

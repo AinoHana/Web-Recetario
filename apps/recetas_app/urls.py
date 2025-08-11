@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 
 app_name = 'recetas_app'
@@ -48,7 +48,7 @@ urlpatterns = [
     path('admin/usuarios/crear/', views.crear_usuario, name='crear_usuario'),
     path('admin/usuarios/editar/<int:pk>/', views.editar_usuario, name='editar_usuario'),
     path('admin/usuarios/eliminar/<int:pk>/', views.eliminar_usuario, name='eliminar_usuario'),
-    
+    path('usuarios/', include(('apps.usuarios.urls', 'usuarios'), namespace='usuarios')),
 
     # Rutas para páginas estáticas
     path('acerca-de/', views.acerca_de, name='acerca_de'),
