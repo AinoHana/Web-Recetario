@@ -1,7 +1,7 @@
 # usuarios/forms.py
 from django import forms
-from django.contrib.auth.models import User # Importamos el modelo User de Django
-from django.contrib.auth.forms import UserCreationForm 
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from .models import Perfil, CategoriaFavorita, Mensaje 
 
 # Formulario de Registro Personalizado
@@ -33,6 +33,11 @@ class PerfilUpdateForm(forms.ModelForm):
             'localidad', 
             'pais',     
             'acerca_de_mi',
+            'movil',
+            'mostrar_cumpleanos',
+            'twitter', 
+            'instagram', 
+            'linkedin',
         ]
         widgets = {
             'fecha_nacimiento': forms.DateInput(attrs={'type': 'date'}),
@@ -48,7 +53,7 @@ class SeguridadPerfilForm(forms.ModelForm):
             'recibir_emails_mensajes_privados',
             'permitir_mensajes_privados',
             'mostrar_cumpleanos', 
-            'mostrar_edad',       
+            'mostrar_edad',     
         ]
 
 #Formulario para crear una categoría de favoritos
@@ -111,4 +116,4 @@ class ComposeMessageForm(forms.ModelForm):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         if user:
-            self.fields['destinatario'].queryset = User.objects.all().exclude(pk=user.pk)    
+            self.fields['destinatario'].queryset = User.objects.all().exclude(pk=user.pk)

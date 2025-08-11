@@ -13,7 +13,6 @@ urlpatterns = [
     # URLs de perfil
     path('perfil/', views.ver_perfil, name='ver_perfil'),
     path('perfil/editar/', views.perfil_editar, name='editar_perfil'),
-    path('perfil/seguridad/', views.perfil_seguridad, name='seguridad_perfil'),
     path('perfil/favoritos/', views.perfil_favoritos, name='favoritos_perfil'),
     path('perfil/mis_comentarios/', views.perfil_mis_comentarios, name='mis_comentarios'),
     

@@ -1,4 +1,5 @@
 # apps/usuarios/views.py
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
@@ -6,14 +7,14 @@ from django.contrib.auth import login
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
 from django.contrib.auth import update_session_auth_hash
-from django.db.models import Q 
-from django.contrib.auth.models import User 
-from django.http import JsonResponse, HttpResponseRedirect 
-from django.views.decorators.http import require_POST 
+from django.db.models import Q
+from django.contrib.auth.models import User
+from django.http import JsonResponse, HttpResponseRedirect
+from django.views.decorators.http import require_POST
 
 from .forms import UserUpdateForm, PerfilUpdateForm, SeguridadPerfilForm, CategoriaFavoritaForm, MensajeForm, ComposeMessageForm
 from .models import Perfil, CategoriaFavorita, Mensaje
-from apps.recetas_app.models import Receta, Comentario, RecetaFavorita 
+from apps.recetas_app.models import Receta, Comentario, RecetaFavorita
 
 def registro(request):
     """
@@ -79,7 +80,7 @@ def perfil_seguridad(request):
                 password_form.save()
                 update_session_auth_hash(request, password_form.user)
                 return redirect('usuarios:seguridad_perfil')
-            
+
         if 'seguridad_settings_submit' in request.POST:
             if seguridad_form.is_valid():
                 seguridad_form.save()
@@ -99,14 +100,15 @@ def perfil_favoritos(request):
     """
     Vista para gestionar las recetas y categorías favoritas.
     """
+    # Se usa 'usuario' para RecetaFavorita y 'user' para CategoriaFavorita
     recetas_favoritas = RecetaFavorita.objects.filter(usuario=request.user).order_by('-fecha_agregado')
-    categorias_favoritas = CategoriaFavorita.objects.filter(usuario=request.user).order_by('nombre')
+    categorias_favoritas = CategoriaFavorita.objects.filter(user=request.user).order_by('nombre')
 
     if request.method == 'POST':
         categoria_form = CategoriaFavoritaForm(request.POST)
         if categoria_form.is_valid():
             nueva_categoria = categoria_form.save(commit=False)
-            nueva_categoria.usuario = request.user
+            nueva_categoria.user = request.user
             nueva_categoria.save()
             return redirect('usuarios:favoritos_perfil')
     else:
@@ -170,7 +172,7 @@ def inbox(request):
     mensajes = Mensaje.objects.filter(
         Q(remitente=request.user) | Q(destinatario=request.user)
     ).order_by('-fecha_envio')
-    
+
     conversations = {}
     for mensaje in mensajes:
         other_user = mensaje.remitente if mensaje.destinatario == request.user else mensaje.destinatario
@@ -184,9 +186,9 @@ def inbox(request):
                     is_leido=False
                 ).count()
             }
-    
+
     conversation_list = list(conversations.values())
-    
+
     return render(request, 'usuarios/inbox.html', {
         'conversations': conversation_list,
     })
@@ -199,18 +201,18 @@ def private_message(request, username):
     y enviar un nuevo mensaje.
     """
     other_user = get_object_or_404(User, username=username)
-    
+
     messages = Mensaje.objects.filter(
         Q(remitente=request.user, destinatario=other_user) |
         Q(remitente=other_user, destinatario=request.user)
     ).order_by('fecha_envio')
-    
+
     Mensaje.objects.filter(
-        remitente=other_user, 
-        destinatario=request.user, 
+        remitente=other_user,
+        destinatario=request.user,
         is_leido=False
     ).update(is_leido=True)
-    
+
     if request.method == 'POST':
         form = MensajeForm(request.POST)
         if form.is_valid():
@@ -223,7 +225,7 @@ def private_message(request, username):
             return redirect('usuarios:private_message', username=username)
     else:
         form = MensajeForm()
-        
+
     return render(request, 'usuarios/private_message.html', {
         'messages': messages,
         'other_user': other_user,
@@ -245,17 +247,18 @@ def compose_new_message(request):
             return redirect('usuarios:private_message', username=new_message.destinatario.username)
     else:
         form = ComposeMessageForm(user=request.user)
-    
+
     return render(request, 'usuarios/compose.html', {'form': form})
 
-@require_POST # Asegura que solo se acepten peticiones POST
-@login_required # Asegura que solo usuarios autenticados puedan usar esta vista
+@require_POST
+@login_required
 def toggle_favorito(request, receta_pk):
     """
     Añade o quita una receta de favoritos y devuelve una respuesta JSON.
     """
     receta = get_object_or_404(Receta, pk=receta_pk)
-    
+
+    # Se usa 'usuario' para el modelo RecetaFavorita
     favorito_existente = RecetaFavorita.objects.filter(usuario=request.user, receta=receta)
     is_favorited = False
 
@@ -265,8 +268,8 @@ def toggle_favorito(request, receta_pk):
     else:
         RecetaFavorita.objects.create(usuario=request.user, receta=receta)
         is_favorited = True
-    
-    return JsonResponse({'is_favorited': is_favorited}) 
+
+    return JsonResponse({'is_favorited': is_favorited})
 
 
 @login_required
@@ -278,7 +281,9 @@ def add_to_category(request, receta_pk):
     if request.method == 'POST':
         categoria_id = request.POST.get('categoria_id')
         if categoria_id:
-            categoria = get_object_or_404(CategoriaFavorita, pk=categoria_id, usuario=request.user)
+            # Se usa 'user' para el modelo CategoriaFavorita
+            categoria = get_object_or_404(CategoriaFavorita, pk=categoria_id, user=request.user)
+            # Se usa 'usuario' para el modelo RecetaFavorita
             receta_favorita, created = RecetaFavorita.objects.get_or_create(usuario=request.user, receta=receta)
             receta_favorita.categoria = categoria
             receta_favorita.save()

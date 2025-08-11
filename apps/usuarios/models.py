@@ -7,24 +7,46 @@ from django.utils import timezone
 
 # Modelo de Perfil de Usuario    
 class Perfil(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
-    nickname = models.CharField(max_length=100, blank=True, null=True)
-    fecha_nacimiento = models.DateField(null=True, blank=True)
-
-    recibir_emails_recetas_nuevas = models.BooleanField(default=True)
-    recibir_emails_mensajes_privados = models.BooleanField(default=True)
-    permitir_mensajes_privados = models.BooleanField(default=True)
-
-    localidad = models.CharField(max_length=100, blank=True, null=True)
-    pais = models.CharField(max_length=100, blank=True, null=True)
-    acerca_de_mi = models.TextField(blank=True, null=True)
+    # Campo de relación con el usuario
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     
+    # Información básica
+    avatar = models.ImageField(upload_to='avatares', null=True, blank=True)
+    nickname = models.CharField(max_length=50, null=True, blank=True)
+    acerca_de_mi = models.TextField(max_length=500, blank=True, null=True)
+    
+    # Información de ubicación y contacto
+    localidad = models.CharField(max_length=100, blank=True, null=True)
+    pais = models.CharField(max_length=50, blank=True, null=True)
+    movil = models.CharField(max_length=20, blank=True, null=True)
+    
+    # Información personal
+    fecha_nacimiento = models.DateField(null=True, blank=True)
     mostrar_cumpleanos = models.BooleanField(default=True)
     mostrar_edad = models.BooleanField(default=True)
+    
+    # Campos para redes sociales
+    twitter = models.CharField(max_length=100, blank=True, null=True, verbose_name="Enlace de Twitter")
+    instagram = models.CharField(max_length=100, blank=True, null=True, verbose_name="Enlace de Instagram")
+    linkedin = models.CharField(max_length=100, blank=True, null=True, verbose_name="Enlace de LinkedIn")
+
+    # Configuraciones de privacidad y notificaciones
+    configuracion_privacidad = models.CharField(
+        max_length=20,
+        choices=[
+            ('publico', 'Público'),
+            ('privado', 'Privado'),
+            ('seguidores', 'Seguidores')
+        ],
+        default='publico',
+        verbose_name="Configuración de Privacidad"
+    )
+    recibir_emails_recetas_nuevas = models.BooleanField(default=True, verbose_name="Recibir emails de recetas nuevas")
+    recibir_emails_mensajes_privados = models.BooleanField(default=True, verbose_name="Recibir emails de mensajes privados")
+    permitir_mensajes_privados = models.BooleanField(default=True, verbose_name="Permitir mensajes privados")
 
     def __str__(self):
-        return f'Perfil de {self.user.username}'
+        return f'{self.user.username} Perfil'
 
     @property
     def edad(self):
