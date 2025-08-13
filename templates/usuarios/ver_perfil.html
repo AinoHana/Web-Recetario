@@ -84,21 +84,44 @@
                                 <span class="contact-label">Cumpleaños: {{ perfil.fecha_nacimiento|date:"d M" }}</span>
                             </li>
                         {% endif %}
-                        <li>
-                            <span class="icon">&#128241;</span>
-                            <span class="contact-label">Móvil</span>
-                        </li>
-                        <li>
-                            <span class="icon">&#9993;</span>
-                            <span class="contact-label">Mail</span>
-                        </li>
-                        <li>
-                            <span class="icon">&#128270;</span>
-                            <span class="contact-label">Redes Sociales</span>
-                        </li>
+                        {% if user.email %}
+                            <li>
+                                <span class="icon">&#9993;</span>
+                                <span class="contact-label">{{ user.email }}</span>
+                            </li>
+                        {% endif %}
+                        {% if perfil.movil %}
+                            <li>
+                                <span class="icon">&#128241;</span>
+                                <span class="contact-label">{{ perfil.movil }}</span>
+                            </li>
+                        {% endif %}
+                        {% if perfil.twitter or perfil.instagram or perfil.linkedin %}
+                            <li>
+                                <span class="icon">&#128270;</span>
+                                <span class="contact-label">Redes Sociales</span>
+                            </li>
+                            <li class="social-links-list">
+                                {% if perfil.twitter %}
+                                    <a href="{{ perfil.twitter }}" target="_blank" rel="noopener noreferrer" class="social-link twitter">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                {% endif %}
+                                {% if perfil.instagram %}
+                                    <a href="{{ perfil.instagram }}" target="_blank" rel="noopener noreferrer" class="social-link instagram">
+                                        <i class="fab fa-instagram"></i>
+                                    </a>
+                                {% endif %}
+                                {% if perfil.linkedin %}
+                                    <a href="{{ perfil.linkedin }}" target="_blank" rel="noopener noreferrer" class="social-link linkedin">
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                {% endif %}
+                            </li>
+                        {% endif %}
                     </ul>
                 </div>
-                
+
                 {# Sección "Acerca de mí" como una tarjeta separada #}
                 {% if perfil.acerca_de_mi %}
                     <div class="profile-section-card about-me-card">

@@ -1,35 +1,34 @@
 # blog-base/apps/usuarios/context_processors.py
 
-from django.apps import apps # Importar apps
+from django.apps import apps
 
 def unread_messages_count(request):
-    # Solo si el usuario está autenticado, intentamos obtener el conteo de mensajes
-    if request.user.is_authenticated:
-        try:
-            # Usamos apps.get_model para cargar los modelos de forma segura.
-            # Esto asegura que el registro de aplicaciones esté listo.
-            Perfil = apps.get_model('usuarios', 'Perfil')
-            Mensaje = apps.get_model('usuarios', 'Mensaje')
+    """
+    Agrega el conteo de mensajes no leídos al contexto de todas las plantillas
+    para los usuarios autenticados.
+    """
+    # Si el usuario no está autenticado, no tiene mensajes no leídos.
+    if not request.user.is_authenticated:
+        return {'unread_messages_count': 0}
 
-            # Intentar obtener el perfil del usuario.
-            # Usamos .first() para evitar un error si no hay perfil (aunque debería haberlo)
-            # y para no lanzar un DoesNotExist si no se encuentra.
-            perfil = Perfil.objects.filter(user=request.user).first()
+    try:
+        # Usamos apps.get_model para evitar errores de importación circular
+        # y para asegurar que los modelos estén listos.
+        Mensaje = apps.get_model('usuarios', 'Mensaje')
 
-            if perfil:
-                # Contar mensajes no leídos dirigidos a este perfil
-                unread_count = Mensaje.objects.filter(
-                    destinatario=perfil,
-                    leido=False
-                ).count()
-                return {'unread_messages_count': unread_count}
-            else:
-                # Si no hay perfil, el conteo es 0
-                return {'unread_messages_count': 0}
-        except Exception as e:
-            # En caso de cualquier error 
-            # devolvemos 0 para evitar que la página falle.
-            print(f"Error en unread_messages_count context processor: {e}")
-            return {'unread_messages_count': 0}
-    # Si el usuario no está autenticado, no hay mensajes no leídos para él
-    return {'unread_messages_count': 0}
+        # Contar los mensajes no leídos dirigidos al usuario actual.
+        # Directamente usamos request.user, ya que el campo 'destinatario'
+        # se relaciona con el modelo User, no con Perfil.
+        # También corregimos el nombre del campo a 'is_leido'.
+        unread_count = Mensaje.objects.filter(
+            destinatario=request.user,
+            is_leido=False
+        ).count()
+        
+        return {'unread_messages_count': unread_count}
+
+    except Exception as e:
+        # En caso de cualquier error (por ejemplo, si el modelo no existe),
+        # devolvemos 0 para evitar que la página falle.
+        print(f"Error en unread_messages_count context processor: {e}")
+        return {'unread_messages_count': 0}

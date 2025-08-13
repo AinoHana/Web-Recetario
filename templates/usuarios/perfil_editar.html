@@ -11,128 +11,151 @@
 <div class="main-content-new">
     <h2 class="section-title">Editar Perfil</h2>
     <div class="form-container">
-        <p class="form-description">Aquí puedes actualizar tu información personal.</p>
-        <form method="post" enctype="multipart/form-data"> {# ¡Importante para subir archivos como el avatar! #}
-            {% csrf_token %}
-            
-            {# Tarjeta superior - Avatar, nombre y email #}
-            <div class="profile-header-edit-card">
-                <div class="profile-avatar-wrapper">
-                    <div class="profile-avatar-edit-container">
-                        {% if user.perfil.avatar %}
-                            <img src="{{ user.perfil.avatar.url }}" alt="Avatar actual" class="profile-avatar-preview">
-                        {% else %}
-                            <img src="{% static 'img/default_avatar.png' %}" alt="Avatar por defecto" class="profile-avatar-preview">
-                        {% endif %}
-                        <div class="avatar-upload-field">
-                            {{ perfil_form.avatar.label_tag }}
-                            {{ perfil_form.avatar }}
-                            {% if perfil_form.avatar.errors %}
-                                <div class="errorlist">{{ perfil_form.avatar.errors }}</div>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-                <div class="profile-info-edit-main">
-                    {# Campos de usuario para nombre y email #}
-                    <div class="form-field-group">
-                        <label for="{{ user_form.first_name.id_for_label }}">Nombre:</label>
-                        {{ user_form.first_name }}
-                        {% if user_form.first_name.errors %}
-                            <div class="errorlist">{{ user_form.first_name.errors }}</div>
-                        {% endif %}
-                    </div>
-                    <div class="form-field-group">
-                        <label for="{{ user_form.email.id_for_label }}">Email:</label>
-                        {{ user_form.email }}
-                        {% if user_form.email.errors %}
-                            <div class="errorlist">{{ user_form.email.errors }}</div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
 
-            {# Tarjeta de campos de perfil #}
-            <div class="form-card">
-                <h3>Información de Perfil y Contacto</h3>
-                <hr class="section-divider">
-                <div class="form-fields-grid">
-                    {# Columna izquierda #}
-                    <div class="form-column">
-                        <div class="form-field-group">
-                            <label for="{{ perfil_form.localidad.id_for_label }}">Ubicación:</label>
-                            {{ perfil_form.localidad }}
-                            {% if perfil_form.localidad.errors %}
-                                <div class="errorlist">{{ perfil_form.localidad.errors }}</div>
+        <!-- Mensajes de Django para feedback -->
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        <!-- ========================================================== -->
+        <!-- FORMULARIO 1: Para actualizar el perfil y la información de usuario -->
+        <!-- ESTE FORMULARIO SOLO MANEJA LOS DATOS DE PERFIL -->
+        <!-- ========================================================== -->
+        <div class="form-card profile-section">
+            <h3 class="card-title">Información de Perfil</h3>
+            <p class="card-description">Actualiza tus datos personales y de contacto.</p>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="profile">
+
+                {# Campos de usuario y perfil #}
+                {# Tarjeta superior - Avatar, nombre y email #}
+                <div class="profile-header-edit-card">
+                    <div class="profile-avatar-wrapper">
+                        <div class="profile-avatar-edit-container">
+                            {% if user.perfil.avatar %}
+                                <img src="{{ user.perfil.avatar.url }}" alt="Avatar actual" class="profile-avatar-preview">
+                            {% else %}
+                                <img src="{% static 'img/default_avatar.png' %}" alt="Avatar por defecto" class="profile-avatar-preview">
                             {% endif %}
-                        </div>
-                        <div class="form-field-group">
-                            <label for="{{ perfil_form.movil.id_for_label }}">Móvil:</label>
-                            {{ perfil_form.movil }}
-                            {% if perfil_form.movil.errors %}
-                                <div class="errorlist">{{ perfil_form.movil.errors }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="form-field-group">
-                            <label for="{{ perfil_form.nickname.id_for_label }}">Nickname:</label>
-                            {{ perfil_form.nickname }}
-                            {% if perfil_form.nickname.errors %}
-                                <div class="errorlist">{{ perfil_form.nickname.errors }}</div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    
-                    {# Columna derecha #}
-                    <div class="form-column">
-                        <div class="form-field-group">
-                            <label for="{{ perfil_form.fecha_nacimiento.id_for_label }}">Cumpleaños:</label>
-                            {{ perfil_form.fecha_nacimiento }}
-                            {% if perfil_form.fecha_nacimiento.errors %}
-                                <div class="errorlist">{{ perfil_form.fecha_nacimiento.errors }}</div>
-                            {% endif %}
-                            <div class="form-checkbox">
-                                {{ perfil_form.mostrar_cumpleanos }} {{ perfil_form.mostrar_cumpleanos.label_tag }}
+                            <div class="avatar-upload-field">
+                                {{ perfil_form.avatar.label_tag }}
+                                {{ perfil_form.avatar }}
+                                {% if perfil_form.avatar.errors %}
+                                    <div class="errorlist">{{ perfil_form.avatar.errors }}</div>
+                                {% endif %}
                             </div>
                         </div>
-                        
+                    </div>
+                    <div class="profile-info-edit-main">
                         <div class="form-field-group">
-                            <label for="{{ perfil_form.twitter.id_for_label }}">Twitter:</label>
-                            {{ perfil_form.twitter }}
-                            {% if perfil_form.twitter.errors %}
-                                <div class="errorlist">{{ perfil_form.twitter.errors }}</div>
+                            <label for="{{ user_form.first_name.id_for_label }}">Nombre:</label>
+                            {{ user_form.first_name }}
+                            {% if user_form.first_name.errors %}
+                                <div class="errorlist">{{ user_form.first_name.errors }}</div>
                             {% endif %}
                         </div>
-                        
                         <div class="form-field-group">
-                            <label for="{{ perfil_form.instagram.id_for_label }}">Instagram:</label>
-                            {{ perfil_form.instagram }}
-                            {% if perfil_form.instagram.errors %}
-                                <div class="errorlist">{{ perfil_form.instagram.errors }}</div>
-                            {% endif %}
-                        </div>
-                        
-                        <div class="form-field-group">
-                            <label for="{{ perfil_form.linkedin.id_for_label }}">LinkedIn:</label>
-                            {{ perfil_form.linkedin }}
-                            {% if perfil_form.linkedin.errors %}
-                                <div class="errorlist">{{ perfil_form.linkedin.errors }}</div>
-                            {% endif %}
-                        </div>
-                        
-                        <div class="form-field-group">
-                            <label for="{{ perfil_form.acerca_de_mi.id_for_label }}">Acerca de mí:</label>
-                            {{ perfil_form.acerca_de_mi }}
-                            {% if perfil_form.acerca_de_mi.errors %}
-                                <div class="errorlist">{{ perfil_form.acerca_de_mi.errors }}</div>
+                            <label for="{{ user_form.email.id_for_label }}">Email:</label>
+                            {{ user_form.email }}
+                            {% if user_form.email.errors %}
+                                <div class="errorlist">{{ user_form.email.errors }}</div>
                             {% endif %}
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="form-card password-section">
-                <h3>Contraseña</h3>
-                <hr class="section-divider">
+                {# Tarjeta de campos de perfil #}
+                <div class="form-card-inner">
+                    <div class="form-fields-grid">
+                        <div class="form-column">
+                            <div class="form-field-group">
+                                <label for="{{ perfil_form.localidad.id_for_label }}">Ubicación:</label>
+                                {{ perfil_form.localidad }}
+                                {% if perfil_form.localidad.errors %}
+                                    <div class="errorlist">{{ perfil_form.localidad.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-field-group">
+                                <label for="{{ perfil_form.movil.id_for_label }}">Móvil:</label>
+                                {{ perfil_form.movil }}
+                                {% if perfil_form.movil.errors %}
+                                    <div class="errorlist">{{ perfil_form.movil.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-field-group">
+                                <label for="{{ perfil_form.nickname.id_for_label }}">Nickname:</label>
+                                {{ perfil_form.nickname }}
+                                {% if perfil_form.nickname.errors %}
+                                    <div class="errorlist">{{ perfil_form.nickname.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-column">
+                            <div class="form-field-group">
+                                <label for="{{ perfil_form.fecha_nacimiento.id_for_label }}">Cumpleaños:</label>
+                                {{ perfil_form.fecha_nacimiento }}
+                                {% if perfil_form.fecha_nacimiento.errors %}
+                                    <div class="errorlist">{{ perfil_form.fecha_nacimiento.errors }}</div>
+                                {% endif %}
+                                <div class="form-checkbox">
+                                    {{ perfil_form.mostrar_cumpleanos }} {{ perfil_form.mostrar_cumpleanos.label_tag }}
+                                </div>
+                            </div>
+                            <div class="form-field-group">
+                                <label for="{{ perfil_form.twitter.id_for_label }}">Twitter:</label>
+                                {{ perfil_form.twitter }}
+                                {% if perfil_form.twitter.errors %}
+                                    <div class="errorlist">{{ perfil_form.twitter.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-field-group">
+                                <label for="{{ perfil_form.instagram.id_for_label }}">Instagram:</label>
+                                {{ perfil_form.instagram }}
+                                {% if perfil_form.instagram.errors %}
+                                    <div class="errorlist">{{ perfil_form.instagram.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-field-group">
+                                <label for="{{ perfil_form.linkedin.id_for_label }}">LinkedIn:</label>
+                                {{ perfil_form.linkedin }}
+                                {% if perfil_form.linkedin.errors %}
+                                    <div class="errorlist">{{ perfil_form.linkedin.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-field-group">
+                                <label for="{{ perfil_form.acerca_de_mi.id_for_label }}">Acerca de mí:</label>
+                                {{ perfil_form.acerca_de_mi }}
+                                {% if perfil_form.acerca_de_mi.errors %}
+                                    <div class="errorlist">{{ perfil_form.acerca_de_mi.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit">Actualizar Perfil</button>
+                </div>
+            </form>
+        </div>
+
+        <hr class="section-divider">
+
+        <!-- ========================================================== -->
+        <!-- FORMULARIO 2: Para cambiar la contraseña -->
+        <!-- ESTE FORMULARIO SOLO MANEJA EL CAMBIO DE CONTRASEÑA -->
+        <!-- ========================================================== -->
+        <div class="form-card password-section">
+            <h3 class="card-title">Cambiar Contraseña</h3>
+            <p class="card-description">Este cambio es opcional. Solo se aplica al presionar el botón.</p>
+            <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="form_type" value="password">
                 <div class="form-fields-grid">
                     <div class="form-column">
                         <div class="form-field-group">
@@ -151,12 +174,12 @@
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="button-group">
-                <button type="submit" class="button-primary">Guardar Cambios</button>
-            </div>
-        </form>
+                <div class="button-group">
+                    <!-- Es CRÍTICO que este botón tenga este 'name' -->
+                    <button type="submit">Cambiar Contraseña</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock content %}

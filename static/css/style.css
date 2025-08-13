@@ -125,63 +125,6 @@ html, body {
     font-size: 18px;
 }
 
-/* Estilos para el badge de notificaciones/mensajes */
-.badge {
-    background-color: var(--favorite-filled);
-    color: var(--white-text);
-    font-size: 10px;
-    font-weight: bold;
-    border-radius: 50%;
-    padding: 3px 6px;
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    min-width: 18px;
-    text-align: center;
-    line-height: 1;
-}
-
-/* Ajuste para el enlace de icono para que el badge se posicione correctamente */
-.nav-icon-link {
-    position: relative;
-    color: var(--white-text);
-    text-decoration: none;
-    font-size: 20px;
-    padding: 5px;
-    border-radius: 50%;
-    transition: background-color 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    overflow: hidden;
-}
-
-.nav-icon-link:hover {
-    background-color: var(--accent-light);
-}
-
-/* Estilo para mensajes sin leer */
-.nav-messages-link.unread-messages {
-    background-color: var(--favorite-filled);
-    border-radius: 5px;
-    padding: 5px 10px;
-    transition: background-color 0.2s ease;
-}
-
-.nav-messages-link.unread-messages .nav-icon {
-    color: var(--white-text);
-}
-
-.nav-messages-link.unread-messages:hover {
-    background-color: #CC5A5A; /* Un rojo más oscuro */
-}
-
-.icon {
-    font-family: 'Arial Unicode MS', sans-serif;
-}
-
 /* Botones de Autenticación (Login/Register) */
 .auth-button-new {
     background-color: var(--button-primary-bg);
@@ -230,7 +173,7 @@ html, body {
     height: 100%;
     object-fit: cover;
     border-radius: 50%;
-    border: 2px solid var(--golden-border); 
+    border: 2px solid var(--golden-border);
 }
 
 .dropdown-menu-new {
@@ -263,6 +206,35 @@ html, body {
 .dropdown-item-new:hover {
     background-color: var(--accent-light);
 }
+
+/* Estilos específicos para el botón de "Cerrar Sesión"
+ * Esto asegura que el diseño del menú desplegable sea consistente con la nueva imagen.
+ */
+form.logout-form button.logout-button-new {
+    /* Reiniciamos los estilos de botón que causan el fondo gris */
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+
+    /* Aplicamos los mismos estilos que los otros elementos del menú con !important */
+    color: var(--white-text) !important;
+    padding: 12px 16px !important;
+    text-decoration: none !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    transition: background-color 0.3s ease !important;
+    display: block !important;
+    text-align: left !important;
+}
+
+form.logout-form button.logout-button-new:hover {
+    background-color: var(--accent-light) !important;
+}
+
+
 
 /* Estilos de la Sección Hero (Banner) */
 .hero-section {
@@ -307,12 +279,12 @@ html, body {
     position: relative;
     width: 80%;
     max-width: 600px;
-    height: auto; 
-    min-height: 250px; 
+    height: auto;
+    min-height: 250px;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: visible; 
+    overflow: visible;
     margin-bottom: 30px;
 }
 
@@ -583,7 +555,7 @@ html, body {
 .latest-recipes-grid {
     display: grid;
     /* Por defecto, una columna en móviles */
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px; /* Espacio entre las tarjetas */
     justify-content: center; /* Centrar las tarjetas si no llenan la fila */
     align-items: start;
@@ -1729,6 +1701,11 @@ Tarjeta de Cabecera con Foto Asimétrica
     color: var(--golden-border);
 }
 
+.header-text-content .header-description {
+    color: #FFF !important;
+    font-style: italic;
+    margin-top: 10px;
+}
 .header-meta {
     font-family: 'Inter', sans-serif;
     font-size: 1rem;
@@ -2183,7 +2160,7 @@ Estilos para el modal (sustituto de alert)
     .featured-recipe-image {
         max-width: 100%;
     }
-    .recipe-grid, .tip-grid { 
+    .recipe-grid, .tip-grid {
         grid-template-columns: 1fr;
     }
     .search-navigation-buttons {
@@ -3005,8 +2982,8 @@ Estilos para el modal (sustituto de alert)
 /* --- Estilos para la Cuadrícula de Recetas Populares --- */
 
 .recipe-popular-grid-container {
-    display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 35px; /* Espacio entre las tarjetas */
     justify-content: center; /* Centrar la cuadrícula si no ocupa todo el ancho */
     margin-bottom: 60px;
@@ -3023,7 +3000,7 @@ Estilos para el modal (sustituto de alert)
     text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
-    display: flex; 
+    display: flex;
     flex-direction: column;
     justify-content: space-between; /* Para empujar el botón "Ver Receta" hacia abajo */
     height: 100%; /* Para que todas las tarjetas tengan la misma altura dentro de la cuadrícula */
@@ -3079,7 +3056,7 @@ Estilos para el modal (sustituto de alert)
     color: white;
     padding: 15px 0;
     text-decoration: none;
-    border-radius: 0 0 15px 15px; 
+    border-radius: 0 0 15px 15px;
     font-weight: 600;
     transition: background-color 0.3s ease;
     border: none;

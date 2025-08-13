@@ -325,3 +325,40 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* ========================================= */
+/* Estilos para Iconos de Redes Sociales    */
+/* ========================================= */
+.social-links-list {
+    display: flex;
+    justify-content: flex-start; /* Alinea los iconos a la izquierda */
+    align-items: center;
+    gap: 15px; /* Espacio entre los iconos */
+    margin-top: 10px;
+    padding-left: 0;
+    list-style: none; /* Elimina el punto de la lista */
+}
+
+.social-link {
+    font-size: 24px;
+    color: #4a4a4a; /* Color por defecto */
+    transition: color 0.3s ease;
+    text-decoration: none;
+}
+
+.social-link:hover {
+    color: var(--color-primary); /* Color de la marca al pasar el ratón */
+}
+
+/* Colores específicos de la marca (opcional) */
+.social-link.twitter:hover {
+    color: #1DA1F2;
+}
+
+.social-link.instagram:hover {
+    color: #E1306C;
+}
+
+.social-link.linkedin:hover {
+    color: #0077B5;
+}

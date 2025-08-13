@@ -1,5 +1,4 @@
 # apps/usuarios/views.py
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
@@ -9,10 +8,13 @@ from django.urls import reverse_lazy
 from django.contrib.auth import update_session_auth_hash
 from django.db.models import Q
 from django.contrib.auth.models import User
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import JsonResponse
 from django.views.decorators.http import require_POST
+from django.contrib import messages
+from django.utils import timezone
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-from .forms import UserUpdateForm, PerfilUpdateForm, SeguridadPerfilForm, CategoriaFavoritaForm, MensajeForm, ComposeMessageForm
+from .forms import UserUpdateForm, PerfilUpdateForm, SeguridadPerfilForm, CategoriaFavoritaForm, MensajeForm
 from .models import Perfil, CategoriaFavorita, Mensaje
 from apps.recetas_app.models import Receta, Comentario, RecetaFavorita
 
@@ -46,61 +48,59 @@ class CustomLogoutView(LogoutView):
 @login_required
 def perfil_editar(request):
     """
-    Vista para editar el perfil del usuario y sus datos de usuario.
+    Vista para editar el perfil del usuario.
     """
     if request.method == 'POST':
-        user_form = UserUpdateForm(request.POST, instance=request.user)
-        perfil_form = PerfilUpdateForm(request.POST, request.FILES, instance=request.user.perfil)
+        form_type = request.POST.get('form_type')
 
-        if user_form.is_valid() and perfil_form.is_valid():
-            user_form.save()
-            perfil_form.save()
-            return redirect('usuarios:editar_perfil')
+        if form_type == 'profile':
+            user_form = UserUpdateForm(request.POST, instance=request.user)
+            perfil_form = PerfilUpdateForm(request.POST, request.FILES, instance=request.user.perfil)
+            password_form = PasswordChangeForm(user=request.user)
+
+            if user_form.is_valid() and perfil_form.is_valid():
+                user_form.save()
+                perfil_form.save()
+                messages.success(request, '¡Tu perfil se ha actualizado correctamente!')
+                return redirect('usuarios:ver_perfil')
+            else:
+                messages.error(request, 'Hubo un error al actualizar el perfil. Por favor, revisa los campos a continuación.')
+                for field, errors in user_form.errors.items():
+                    for error in errors:
+                        messages.error(request, f'Error en el campo de usuario "{field}": {error}')
+                for field, errors in perfil_form.errors.items():
+                    for error in errors:
+                        messages.error(request, f'Error en el campo de perfil "{field}": {error}')
+        elif form_type == 'password':
+            user_form = UserUpdateForm(instance=request.user)
+            perfil_form = PerfilUpdateForm(instance=request.user.perfil)
+            password_form = PasswordChangeForm(user=request.user, data=request.POST)
+
+            if password_form.is_valid():
+                user = password_form.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, '¡Tu contraseña se ha cambiado con éxito!')
+                return redirect('usuarios:editar_perfil')
+            else:
+                messages.error(request, 'Por favor, corrige los errores del formulario de contraseña.')
     else:
         user_form = UserUpdateForm(instance=request.user)
         perfil_form = PerfilUpdateForm(instance=request.user.perfil)
+        password_form = PasswordChangeForm(user=request.user)
 
-    return render(request, 'usuarios/perfil_editar.html', {
+    context = {
         'user_form': user_form,
         'perfil_form': perfil_form,
-        'user': request.user
-    })
-
-@login_required
-def perfil_seguridad(request):
-    """
-    Vista para cambiar la contraseña y otras configuraciones de seguridad.
-    """
-    if request.method == 'POST':
-        password_form = PasswordChangeForm(user=request.user, data=request.POST)
-        seguridad_form = SeguridadPerfilForm(request.POST, instance=request.user.perfil)
-
-        if 'change_password_submit' in request.POST:
-            if password_form.is_valid():
-                password_form.save()
-                update_session_auth_hash(request, password_form.user)
-                return redirect('usuarios:seguridad_perfil')
-
-        if 'seguridad_settings_submit' in request.POST:
-            if seguridad_form.is_valid():
-                seguridad_form.save()
-                return redirect('usuarios:seguridad_perfil')
-    else:
-        password_form = PasswordChangeForm(user=request.user)
-        seguridad_form = SeguridadPerfilForm(instance=request.user.perfil)
-
-    return render(request, 'usuarios/perfil_seguridad.html', {
         'password_form': password_form,
-        'seguridad_form': seguridad_form,
         'user': request.user
-    })
+    }
+    return render(request, 'usuarios/perfil_editar.html', context)
 
 @login_required
 def perfil_favoritos(request):
     """
     Vista para gestionar las recetas y categorías favoritas.
     """
-    # Se usa 'usuario' para RecetaFavorita y 'user' para CategoriaFavorita
     recetas_favoritas = RecetaFavorita.objects.filter(usuario=request.user).order_by('-fecha_agregado')
     categorias_favoritas = CategoriaFavorita.objects.filter(user=request.user).order_by('nombre')
 
@@ -161,94 +161,116 @@ def ver_perfil(request):
     }
     return render(request, 'usuarios/ver_perfil.html', context)
 
-# VISTAS DE MENSAJES PRIVADOS
+# VISTAS DE MENSAJES PRIVADOS (ACTUALIZADAS)
+@login_required
+def perfil_usuario(request, username):
+    """
+    Muestra el perfil de un usuario.
+    """
+    perfil = get_object_or_404(Perfil, user__username=username)
+    context = {
+        'perfil': perfil,
+        'page_title': 'Perfil de ' + username
+    }
+    return render(request, 'usuarios/perfil.html', context)
 
 @login_required
 def inbox(request):
     """
-    Vista para la bandeja de entrada de mensajes.
-    Muestra una lista de conversaciones con el último mensaje.
+    Muestra la bandeja de entrada del usuario con la última conversación por remitente.
     """
-    mensajes = Mensaje.objects.filter(
-        Q(remitente=request.user) | Q(destinatario=request.user)
-    ).order_by('-fecha_envio')
+    mensajes_recibidos = Mensaje.objects.filter(destinatario=request.user).order_by('-fecha_envio')
+    conversaciones = {}
+    for mensaje in mensajes_recibidos:
+        if mensaje.remitente not in conversaciones:
+            conversaciones[mensaje.remitente] = mensaje
+    context = {
+        'page_title': 'Bandeja de Entrada',
+        'conversations': conversaciones,
+        'active_tab': 'inbox'
+    }
+    return render(request, 'usuarios/inbox.html', context)
 
-    conversations = {}
-    for mensaje in mensajes:
-        other_user = mensaje.remitente if mensaje.destinatario == request.user else mensaje.destinatario
-        if other_user.username not in conversations:
-            conversations[other_user.username] = {
-                'other_user': other_user,
-                'last_message': mensaje,
-                'unread_count': Mensaje.objects.filter(
-                    remitente=other_user,
-                    destinatario=request.user,
-                    is_leido=False
-                ).count()
-            }
+@login_required
+def sent_messages(request):
+    """
+    Muestra los mensajes enviados por el usuario.
+    """
+    mensajes_enviados = Mensaje.objects.filter(remitente=request.user).order_by('-fecha_envio')
+    conversaciones = {}
+    for mensaje in mensajes_enviados:
+        if mensaje.destinatario not in conversaciones:
+            conversaciones[mensaje.destinatario] = mensaje
+    context = {
+        'page_title': 'Mensajes Enviados',
+        'conversations': conversaciones,
+        'active_tab': 'sent'
+    }
+    return render(request, 'usuarios/sent_messages.html', context)
 
-    conversation_list = list(conversations.values())
+@login_required
+def compose_message(request, recipient_username=None):
+    """
+    Maneja la lógica para crear un nuevo mensaje.
+    Si se especifica un destinatario, se pre-completa el campo.
+    """
+    form = MensajeForm(request.POST or None)
+    if recipient_username:
+        try:
+            recipient_user = User.objects.get(username=recipient_username)
+            form.fields['destinatario'].initial = recipient_user.pk
+        except User.DoesNotExist:
+            messages.error(request, 'El usuario destinatario no existe.')
+            return redirect('usuarios:compose_message')
 
-    return render(request, 'usuarios/inbox.html', {
-        'conversations': conversation_list,
-    })
+    if request.method == 'POST':
+        if form.is_valid():
+            mensaje = form.save(commit=False)
+            mensaje.remitente = request.user
+            mensaje.save()
+            messages.success(request, '¡Mensaje enviado exitosamente!')
+            return redirect('usuarios:inbox')
 
+    context = {
+        'form': form,
+        'page_title': 'Nuevo Mensaje',
+        'active_tab': 'compose'
+    }
+    return render(request, 'usuarios/compose_message.html', context)
 
 @login_required
 def private_message(request, username):
     """
-    Vista para ver una conversación privada con un usuario específico
-    y enviar un nuevo mensaje.
+    Muestra una conversaci\u00f3n privada con otro usuario y permite responder.
     """
     other_user = get_object_or_404(User, username=username)
-
-    messages = Mensaje.objects.filter(
+    mensajes_privados = Mensaje.objects.filter(
         Q(remitente=request.user, destinatario=other_user) |
         Q(remitente=other_user, destinatario=request.user)
     ).order_by('fecha_envio')
 
-    Mensaje.objects.filter(
-        remitente=other_user,
-        destinatario=request.user,
-        is_leido=False
-    ).update(is_leido=True)
+    # Marca como le\u00eddos los mensajes recibidos del otro usuario
+    received_messages = mensajes_privados.filter(destinatario=request.user, is_leido=False)
+    received_messages.update(is_leido=True)
 
     if request.method == 'POST':
         form = MensajeForm(request.POST)
         if form.is_valid():
-            nuevo_mensaje = form.save(commit=False)
-            nuevo_mensaje.remitente = request.user
-            nuevo_mensaje.destinatario = other_user
-            if not nuevo_mensaje.asunto:
-                nuevo_mensaje.asunto = f"Re: Conversación con {other_user.username}"
-            nuevo_mensaje.save()
+            message = form.save(commit=False)
+            message.remitente = request.user
+            message.destinatario = other_user
+            message.save()
             return redirect('usuarios:private_message', username=username)
     else:
         form = MensajeForm()
 
-    return render(request, 'usuarios/private_message.html', {
-        'messages': messages,
+    context = {
+        'page_title': f'Conversaci\u00f3n con {username}',
         'other_user': other_user,
-        'form': form
-    })
-
-@login_required
-def compose_new_message(request):
-    """
-    Vista para componer y enviar un nuevo mensaje a cualquier usuario.
-    """
-    if request.method == 'POST':
-        form = ComposeMessageForm(request.POST, user=request.user)
-        if form.is_valid():
-            new_message = form.save(commit=False)
-            new_message.remitente = request.user
-            new_message.destinatario = form.cleaned_data['destinatario']
-            new_message.save()
-            return redirect('usuarios:private_message', username=new_message.destinatario.username)
-    else:
-        form = ComposeMessageForm(user=request.user)
-
-    return render(request, 'usuarios/compose.html', {'form': form})
+        'mensajes_privados': mensajes_privados,
+        'form': form,
+    }
+    return render(request, 'usuarios/private_message.html', context)
 
 @require_POST
 @login_required
@@ -257,20 +279,15 @@ def toggle_favorito(request, receta_pk):
     Añade o quita una receta de favoritos y devuelve una respuesta JSON.
     """
     receta = get_object_or_404(Receta, pk=receta_pk)
-
-    # Se usa 'usuario' para el modelo RecetaFavorita
     favorito_existente = RecetaFavorita.objects.filter(usuario=request.user, receta=receta)
     is_favorited = False
-
     if favorito_existente.exists():
         favorito_existente.delete()
         is_favorited = False
     else:
         RecetaFavorita.objects.create(usuario=request.user, receta=receta)
         is_favorited = True
-
     return JsonResponse({'is_favorited': is_favorited})
-
 
 @login_required
 def add_to_category(request, receta_pk):
@@ -281,9 +298,7 @@ def add_to_category(request, receta_pk):
     if request.method == 'POST':
         categoria_id = request.POST.get('categoria_id')
         if categoria_id:
-            # Se usa 'user' para el modelo CategoriaFavorita
             categoria = get_object_or_404(CategoriaFavorita, pk=categoria_id, user=request.user)
-            # Se usa 'usuario' para el modelo RecetaFavorita
             receta_favorita, created = RecetaFavorita.objects.get_or_create(usuario=request.user, receta=receta)
             receta_favorita.categoria = categoria
             receta_favorita.save()

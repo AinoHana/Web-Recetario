@@ -1,4 +1,3 @@
-{# apps/recetas_app/templates/recetas_app/detalle_receta.html #}
 {% extends 'base.html' %}
 {% load static %}
 
@@ -13,6 +12,11 @@
             <div class="header-text-content">
                 <span class="golden-line-horizontal"></span>
                 <h1 class="header-title">{{ receta.titulo }}</h1>
+                
+                <!-- Sección de descripción y categoría agregada -->
+                <p class="header-description">{{ receta.descripcion }}</p>
+                <p class="header-meta">Categoría: {{ receta.categoria }}</p>
+                
                 <p class="header-meta">Porciones: {{ receta.porciones }}</p>
                 <p class="header-meta">Tiempo de preparación: {{ receta.tiempo_preparacion }} mins</p>
                 

@@ -1,41 +1,198 @@
-{# apps/usuarios/compose.html #}
+{# apps/usuarios/compose_message.html #}
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Nuevo Mensaje{% endblock %}
+{% block title %}{{ page_title }}{% endblock %}
 
 {% block content %}
-<div class="container mx-auto p-4 max-w-lg">
-    <h1 class="text-3xl font-bold text-gray-800 mb-6">Componer Nuevo Mensaje</h1>
-    
-    <div class="bg-white p-6 rounded-lg shadow-md">
-        <form method="post" action="{% url 'usuarios:compose_message' %}">
-            {% csrf_token %}
-            
-            <div class="mb-4">
-                <label for="{{ form.destinatario.id_for_label }}" class="block text-gray-700 font-bold mb-2">Destinatario:</label>
-                {{ form.destinatario }}
-            </div>
-            
-            <div class="mb-4">
-                <label for="{{ form.asunto.id_for_label }}" class="block text-gray-700 font-bold mb-2">Asunto:</label>
-                {{ form.asunto }}
-            </div>
+<div class="container-inbox">
+    <!-- Panel lateral de navegación -->
+    <div class="sidebar">
+        <h2 class="sidebar-title">Mensajes</h2>
+        <a href="{% url 'usuarios:compose_message' %}" class="btn-new-message">
+            <i class="fas fa-plus icon-margin"></i> Nuevo Mensaje
+        </a>
+        <nav class="nav-menu">
+            <a href="{% url 'usuarios:inbox' %}" class="nav-item {% if active_tab == 'inbox' %}active{% endif %}">
+                <i class="fas fa-inbox icon-margin"></i>
+                Bandeja de Entrada
+            </a>
+            <a href="{% url 'usuarios:sent_messages' %}" class="nav-item {% if active_tab == 'sent' %}active{% endif %}">
+                <i class="fas fa-paper-plane icon-margin"></i>
+                Mensajes Enviados
+            </a>
+        </nav>
+    </div>
 
-            <div class="mb-4">
-                <label for="{{ form.cuerpo.id_for_label }}" class="block text-gray-700 font-bold mb-2">Mensaje:</label>
-                {{ form.cuerpo }}
-            </div>
-
-            <div class="flex justify-between items-center">
-                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow-md transition duration-300">
-                    Enviar Mensaje
+    <!-- Contenedor principal del formulario de mensaje -->
+    <div class="message-container">
+        <h1 class="container-title">{{ page_title }}</h1>
+        <div class="card p-4">
+            <form method="post" action="{% url 'usuarios:compose_message' %}">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary mt-3">
+                    <i class="fas fa-paper-plane"></i> Enviar Mensaje
                 </button>
-                <a href="{% url 'usuarios:inbox' %}" class="text-gray-600 hover:text-gray-800 transition duration-300">
-                    Cancelar
-                </a>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
+
+<style>
+    /* Estilos del formulario de mensaje */
+    .card {
+        background-color: #ffffff;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    
+    .card p {
+        margin-bottom: 1rem;
+    }
+
+    .card label {
+        display: block;
+        font-weight: 600;
+        color: #4b5563;
+        margin-bottom: 0.5rem;
+    }
+
+    .card input[type="text"],
+    .card textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        transition: border-color 0.2s;
+        background-color: #f9fafb;
+    }
+
+    .card input[type="text"]:focus,
+    .card textarea:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+    }
+    
+    .card textarea {
+        min-height: 150px;
+        resize: vertical;
+    }
+    
+    .btn-primary {
+        background-color: #3b82f6;
+        color: #ffffff;
+        font-weight: 700;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        text-align: center;
+        transition: background-color 0.3s;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-primary:hover {
+        background-color: #2563eb;
+    }
+
+    /* Estilos generales (replicados para consistencia) */
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f7f9fc;
+        margin: 0;
+        padding: 0;
+    }
+    .container-inbox {
+        width: 100%;
+        max-width: 64rem;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 1rem;
+        height: 90vh;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .sidebar {
+        background-color: #ffffff;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        overflow: hidden;
+    }
+    .sidebar-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 1rem;
+    }
+    .btn-new-message {
+        background-color: #3b82f6;
+        color: #ffffff;
+        font-weight: 700;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        text-align: center;
+        transition: background-color 0.3s;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        margin-bottom: 1rem;
+        text-decoration: none;
+        display: block;
+    }
+    .nav-menu {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .nav-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        font-weight: 500;
+        border-radius: 0.5rem;
+        transition: background-color 0.2s;
+        text-decoration: none;
+        color: #4b5563;
+    }
+    .nav-item.active {
+        background-color: #f3f4f6;
+        color: #2563eb;
+    }
+    .message-container {
+        background-color: #ffffff;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1-px rgba(0, 0, 0, 0.06);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+    .container-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 1rem;
+    }
+    @media (min-width: 768px) {
+        .container-inbox {
+            flex-direction: row;
+        }
+        .sidebar {
+            width: 25%;
+        }
+        .message-container {
+            width: 75%;
+        }
+    }
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 {% endblock %}

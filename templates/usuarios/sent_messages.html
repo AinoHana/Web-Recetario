@@ -1,4 +1,4 @@
-{# apps/usuarios/inbox.html #}
+{# apps/usuarios/sent_messages.html #}
 {% extends "base.html" %}
 {% load static %}
 
@@ -6,7 +6,7 @@
 
 {% block content %}
 <div class="container-inbox">
-    <!-- Panel lateral de navegación-->
+    <!-- Panel lateral de navegación -->
     <div class="sidebar">
         <h2 class="sidebar-title">Mensajes</h2>
         <a href="{% url 'usuarios:compose_message' %}" class="btn-new-message">
@@ -30,11 +30,11 @@
         {% if conversations %}
             <div class="conversation-list">
                 {% for other_user, message in conversations.items %}
-                <a href="{% url 'usuarios:private_message' username=other_user.username %}"
+                <a href="{% url 'usuarios:private_message' username=other_user.username %}" 
                    class="conversation-item">
                     <div class="conversation-flex">
-                        <img src="{% if other_user.perfil.imagen %}{{ other_user.perfil.imagen.url }}{% else %}{% static 'img/default_avatar.png' %}{% endif %}"
-                             alt="Avatar de {{ other_user.username }}"
+                        <img src="{% if other_user.perfil.imagen %}{{ other_user.perfil.imagen.url }}{% else %}{% static 'img/default_avatar.png' %}{% endif %}" 
+                             alt="Avatar de {{ other_user.username }}" 
                              class="avatar">
                         <div class="content-wrapper">
                             <div class="title-row">
@@ -44,12 +44,10 @@
                                 </span>
                             </div>
                             <p class="message-info">
-                                {% if message.remitente == request.user %}
-                                    <span class="message-info-label">Para:</span> {{ other_user.username }}
-                                {% else %}
-                                    <span class="message-info-label">De:</span> {{ other_user.username }}
-                                {% endif %}
-                                <span class="message-info-label">Asunto:</span> {{ message.asunto|truncatechars:50 }}
+                                <span class="message-info-label">
+                                    Para: 
+                                </span>
+                                {{ message.contenido|truncatechars:50 }}
                             </p>
                         </div>
                     </div>
@@ -58,9 +56,9 @@
             </div>
         {% else %}
             <p class="empty-message">
-                Tu bandeja de entrada est\u00e1 vac\u00eda.
+                No has enviado mensajes aún.
                 <a href="{% url 'usuarios:compose_message' %}" class="link-create">
-                    \u00a1Env\u00eda tu primer mensaje!
+                    ¡Envía tu primer mensaje!
                 </a>
             </p>
         {% endif %}

@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from apps.usuarios.views import CustomLoginView, CustomLogoutView
+from django.contrib import admin
 
 app_name = 'usuarios'
 
@@ -15,13 +16,14 @@ urlpatterns = [
     path('perfil/editar/', views.perfil_editar, name='editar_perfil'),
     path('perfil/favoritos/', views.perfil_favoritos, name='favoritos_perfil'),
     path('perfil/mis_comentarios/', views.perfil_mis_comentarios, name='mis_comentarios'),
-    
+
     # URLs de Mensajes Privados
     path('mensajes/', views.inbox, name='inbox'),
-    path('mensajes/compose/', views.compose_new_message, name='compose_message'),
+    path('mensajes/enviados/', views.sent_messages, name='sent_messages'),
+    path('mensajes/compose/', views.compose_message, name='compose_message'),
     path('mensajes/<str:username>/', views.private_message, name='private_message'),
 
-    # URLs para favoritos 
+    # URLs para favoritos
     path('toggle_favorito/<int:receta_pk>/', views.toggle_favorito, name='toggle_favorito'),
     path('add-to-category/<int:receta_pk>/', views.add_to_category, name='add_to_category'),
 ]

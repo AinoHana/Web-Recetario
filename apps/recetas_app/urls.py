@@ -1,6 +1,7 @@
 from django.urls import path, include
 from . import views
 
+
 app_name = 'recetas_app'
 
 urlpatterns = [
@@ -37,21 +38,20 @@ urlpatterns = [
 
     # Rutas del Panel de Administración
     path('admin/', views.admin_options_view, name='admin_options'),
-    
+
     # Rutas AJAX del panel de administración
     path('admin/recetas/', views.admin_recetas_ajax, name='admin_recetas'),
     path('admin/categorias/', views.admin_categorias_ajax, name='admin_categorias'),
     path('admin/comentarios/', views.admin_comentarios_ajax, name='admin_comentarios'),
-    
+
     # Ruta corregida para la gestión de usuarios
     path('admin/usuarios/', views.administrar_usuarios, name='admin_usuarios'),
     path('admin/usuarios/crear/', views.crear_usuario, name='crear_usuario'),
     path('admin/usuarios/editar/<int:pk>/', views.editar_usuario, name='editar_usuario'),
     path('admin/usuarios/eliminar/<int:pk>/', views.eliminar_usuario, name='eliminar_usuario'),
-    path('usuarios/', include(('apps.usuarios.urls', 'usuarios'), namespace='usuarios')),
+
 
     # Rutas para páginas estáticas
     path('acerca-de/', views.acerca_de, name='acerca_de'),
     path('contacto/', views.contacto, name='contacto'),
-    
 ]
