@@ -41,7 +41,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'apps.blog.urls' 
+ROOT_URLCONF = 'apps.blog.urls'
 WSGI_APPLICATION = 'apps.blog.wsgi.application'
 
 TEMPLATES = [
@@ -51,7 +51,7 @@ TEMPLATES = [
             BASE_DIR / 'templates',
             BASE_DIR / 'templates' / 'recetas_app',
             BASE_DIR / 'templates' / 'usuarios',
-        ], 
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

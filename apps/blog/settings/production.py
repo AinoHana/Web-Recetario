@@ -26,11 +26,11 @@ DATABASES = {
         #'ENGINE': 'django.db.backends.sqlite3',
         #'NAME': os.path.join(DB_PATH, 'db.sqlite3'),
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),   
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
+        'NAME': 'AinoHana$default',
+        'USER': 'AinoHana',
+        'PASSWORD': 'ElRecetario1234#',
+        'HOST': 'AinoHana.mysql.pythonanywhere-services.com',
+        'PORT': '3306',
     }
 }
 
