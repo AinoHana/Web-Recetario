@@ -20,7 +20,6 @@
             </li>
             {% endfor %}
 
-            {# Enlace para ver todas las categorías - CORREGIDO con la clase de Font Awesome 6 #}
             <li class="category-item">
                 <a href="{% url 'recetas_app:home' %}" class="category-link {% if not categoria_slug %}active{% endif %}">
                     <i class="fa-solid fa-grip-horizontal category-icon"></i> Todas las Categorías
@@ -29,7 +28,7 @@
         </ul>
     </aside>
 
-    <div class="main-content-area"> 
+    <div class="main-content-area">
         <div class="section-wrapper">
             <h2 class="section-title">
                 {# Cambios aquí para hacer el título dinámico #}
@@ -75,7 +74,7 @@
 
         {# Este bloque solo se mostrará si no estoy autenticada #}
         {% if not user.is_authenticated %}
-            <div class="section-wrapper section-bg-secondary"> 
+            <div class="section-wrapper section-bg-secondary">
                 <div class="call-to-action-card">
                     <h2 class="call-to-action-title">¡Únete a nuestra comunidad!</h2>
                     <p class="call-to-action-text">Regístrate para guardar tus recetas favoritas y conectarte con otros amantes de la cocina.</p>
@@ -90,15 +89,15 @@
 {% block extra_body_scripts %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Manejar el envío de formularios de favoritos con AJAX 
+        // Manejar el envío de formularios de favoritos con AJAX
         document.querySelectorAll('.favorite-form').forEach(form => {
             form.addEventListener('submit', function(event) {
-                event.preventDefault(); 
-                
+                event.preventDefault();
+
                 const form = this;
                 const button = form.querySelector('.favorite-toggle-button');
                 const icon = button.querySelector('i');
-                const favoriteText = form.nextElementSibling; 
+                const favoriteText = form.nextElementSibling;
 
                 button.disabled = true;
                 button.style.cursor = 'wait';
@@ -196,7 +195,7 @@
                                 const form = this;
                                 const button = form.querySelector('.favorite-toggle-button');
                                 const icon = button.querySelector('i');
-                                const favoriteText = form.nextElementSibling; 
+                                const favoriteText = form.nextElementSibling;
 
                                 button.disabled = true;
                                 button.style.cursor = 'wait';
@@ -273,7 +272,7 @@
                 // Prevenir la navegación si el clic fue en un elemento interactivo dentro del slide
                 // (por ejemplo, botones dentro del slide si los hubiera, o enlaces explícitos)
                 if (event.target.closest('form') || event.target.tagName === 'A' || event.target.closest('button')) {
-                    return; 
+                    return;
                 }
                 const url = this.dataset.url;
                 if (url) {

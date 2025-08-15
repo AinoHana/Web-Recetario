@@ -6,7 +6,7 @@
 
 {% block content %}
 <div class="container-inbox">
-    <!-- Panel lateral de navegación-->
+    <!-- Panel lateral de navegación -->
     <div class="sidebar">
         <h2 class="sidebar-title">Mensajes</h2>
         <a href="{% url 'usuarios:compose_message' %}" class="btn-new-message">
@@ -30,37 +30,57 @@
         {% if conversations %}
             <div class="conversation-list">
                 {% for other_user, message in conversations.items %}
-                <a href="{% url 'usuarios:private_message' username=other_user.username %}"
-                   class="conversation-item">
-                    <div class="conversation-flex">
-                        <img src="{% if other_user.perfil.imagen %}{{ other_user.perfil.imagen.url }}{% else %}{% static 'img/default_avatar.png' %}{% endif %}"
-                             alt="Avatar de {{ other_user.username }}"
-                             class="avatar">
-                        <div class="content-wrapper">
-                            <div class="title-row">
-                                <h2 class="username">{{ other_user.username }}</h2>
-                                <span class="message-date">
-                                    {{ message.fecha_envio|date:"d M Y" }}
-                                </span>
+                <div class="conversation-item-wrapper">
+                    <a href="{% url 'usuarios:private_message' username=other_user.username %}"
+                       class="conversation-item {% if not message.is_read and active_tab == 'inbox' %}unread-item{% endif %}">
+                        <div class="conversation-flex">
+                            <img src="{% if other_user.perfil.imagen %}{{ other_user.perfil.imagen.url }}{% else %}{% static 'img/default_avatar.png' %}{% endif %}"
+                                 alt="Avatar de {{ other_user.username }}"
+                                 class="avatar">
+                            <div class="content-wrapper">
+                                <div class="title-row">
+                                    <h2 class="username">
+                                        {{ other_user.username }}
+                                        {# Añadimos el badge si el mensaje no ha sido leído y estamos en la bandeja de entrada #}
+                                        {% if not message.is_read and active_tab == 'inbox' %}
+                                            <span class="unread-badge">Nuevo</span>
+                                        {% endif %}
+                                    </h2>
+                                    <span class="message-date">
+                                        {{ message.fecha_envio|date:"d M Y" }}
+                                    </span>
+                                </div>
+                                <p class="message-info">
+                                    {% if active_tab == 'sent' %}
+                                        {# L\u00f3gica para mensajes enviados #}
+                                        <span class="message-info-label">Para:</span> {{ message.receptor.username }}
+                                    {% else %}
+                                        {# L\u00f3gica para la bandeja de entrada #}
+                                        <span class="message-info-label">De:</span> {{ message.remitente.username }}
+                                    {% endif %}
+                                    <span class="message-info-label">Asunto:</span> {{ message.asunto|truncatechars:50 }}
+                                </p>
                             </div>
-                            <p class="message-info">
-                                {% if message.remitente == request.user %}
-                                    <span class="message-info-label">Para:</span> {{ other_user.username }}
-                                {% else %}
-                                    <span class="message-info-label">De:</span> {{ other_user.username }}
-                                {% endif %}
-                                <span class="message-info-label">Asunto:</span> {{ message.asunto|truncatechars:50 }}
-                            </p>
                         </div>
-                    </div>
-                </a>
+                    </a>
+                    <form action="{% url 'usuarios:delete_message' message_id=message.pk %}" method="post" class="delete-form">
+                        {% csrf_token %}
+                        <button type="submit" class="delete-btn" aria-label="Eliminar mensaje">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </form>
+                </div>
                 {% endfor %}
             </div>
         {% else %}
             <p class="empty-message">
-                Tu bandeja de entrada est\u00e1 vac\u00eda.
+                {% if active_tab == 'sent' %}
+                    No has enviado ningún mensaje todavía.
+                {% else %}
+                    Tu bandeja de entrada está vacía.
+                {% endif %}
                 <a href="{% url 'usuarios:compose_message' %}" class="link-create">
-                    \u00a1Env\u00eda tu primer mensaje!
+                    ¡Envía tu primer mensaje!
                 </a>
             </p>
         {% endif %}
@@ -109,11 +129,11 @@
     }
 
     .btn-new-message {
-        background-color: #3b82f6;
+        background-color: #0A2540;
         color: #ffffff;
         font-weight: 700;
         padding: 0.5rem 1rem;
-        border-radius: 0.5rem;
+        border-radius: 5px;
         text-align: center;
         transition: background-color 0.3s;
         box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -287,6 +307,151 @@
 
     .link-create:hover {
         text-decoration: none;
+    }
+
+    /* Media query para escritorio */
+    @media (min-width: 768px) {
+        .container-inbox {
+            flex-direction: row;
+        }
+
+        .sidebar {
+            width: 25%;
+        }
+
+        .message-container {
+            width: 75%;
+        }
+    }
+
+    /*Contenedor botón eliminar*/
+
+    .conversation-item-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background-color: #f9fafb;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .conversation-item {
+        display: block;
+        flex-grow: 1;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .conversation-item:hover {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    .conversation-item.unread-item {
+        border-left: 4px solid #3b82f6;
+        background-color: #eff6ff;
+        padding-left: calc(1rem - 4px); /* Ajustamos el padding para compensar el borde */
+    }
+
+    .conversation-flex {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .avatar {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 9999px;
+        object-fit: cover;
+    }
+
+    .content-wrapper {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .title-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.25rem;
+    }
+
+    .username {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #1f2937;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: flex;
+        align-items: center;
+    }
+
+    .unread-badge {
+        background-color: #CFA854;
+        color: #ffffff;
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 0.25rem 0.5rem;
+        border-radius: 9999px;
+        margin-left: 0.5rem;
+        display: inline-block;
+    }
+
+    .message-date {
+        font-size: 0.875rem;
+        color: #6b7280;
+        margin-left: auto;
+        flex-shrink: 0;
+    }
+
+    .message-info {
+        color: #4b5563;
+        font-size: 0.875rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .message-info-label {
+        font-weight: 700;
+        margin-right: 0.25rem;
+    }
+
+    .empty-message {
+        color: #6b7280;
+        margin-top: 1rem;
+    }
+
+    .link-create {
+        color: #3b82f6;
+        text-decoration: underline;
+    }
+
+    .link-create:hover {
+        text-decoration: none;
+    }
+
+    /* Nuevo bot\u00f3n de eliminar */
+    .delete-form {
+        display: flex;
+        align-items: center;
+    }
+
+    .delete-btn {
+        background: none;
+        border: none;
+        color: #9ca3af;
+        cursor: pointer;
+        font-size: 1.25rem;
+        transition: color 0.2s;
+        padding: 0;
+    }
+
+    .delete-btn:hover {
+        color: #ef4444;
     }
 
     /* Media query para escritorio */

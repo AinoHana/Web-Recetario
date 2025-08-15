@@ -6,7 +6,7 @@
 
 {% block content %}
 <div class="container-inbox">
-    <!-- Panel lateral de navegaci\u00f3n -->
+    <!-- Panel lateral de navegación -->
     <div class="sidebar">
         <h2 class="sidebar-title">Mensajes</h2>
         <a href="{% url 'usuarios:compose_message' %}" class="btn-new-message">
@@ -24,7 +24,7 @@
         </nav>
     </div>
 
-    <!-- Contenedor principal de la conversaci\u00f3n -->
+    <!-- Contenedor principal de la conversación -->
     <div class="message-container">
         <h1 class="container-title">Conversaci\u00f3n con {{ other_user.username }}</h1>
         <div class="conversation-box">
@@ -38,7 +38,7 @@
                     </div>
                 {% empty %}
                     <p class="no-messages">
-                        A\u00fan no hay mensajes en esta conversaci\u00f3n.
+                        A\u00fan no hay mensajes en esta conversación.
                     </p>
                 {% endfor %}
             </div>
@@ -59,7 +59,7 @@
 </div>
 
 <style>
-    /* Estilos de la conversaci\u00f3n */
+    /* Estilos de la conversación */
     .conversation-box {
         display: flex;
         flex-direction: column;
@@ -87,7 +87,7 @@
     }
 
     .message-item.sent {
-        background-color: #3b82f6;
+        background-color: #0A2540;
         color: #ffffff;
         align-self: flex-end;
         border-bottom-right-radius: 0.25rem;
@@ -104,7 +104,7 @@
         margin: 0;
         font-size: 0.875rem;
     }
-    
+
     .message-time {
         display: block;
         font-size: 0.75rem;
@@ -112,7 +112,7 @@
         text-align: right;
         margin-top: 0.25rem;
     }
-    
+
     .message-item.received .message-time {
         color: #6b7280;
     }
@@ -123,7 +123,7 @@
         margin-top: auto;
         margin-bottom: auto;
     }
-    
+
     .message-form-container {
         padding: 1rem;
         border-top: 1px solid #d1d5db;
@@ -137,7 +137,7 @@
         gap: 0.5rem;
         align-items: center;
     }
-    
+
     .form-group input[name="cuerpo"] {
         flex: 1;
         padding: 0.75rem;
@@ -151,9 +151,9 @@
         border-color: #3b82f6;
         box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
     }
-    
+
     .btn-primary {
-        background-color: #3b82f6;
+        background-color: #0A2540;
         color: #ffffff;
         width: 3rem;
         height: 3rem;

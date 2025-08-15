@@ -22,6 +22,7 @@ urlpatterns = [
     path('mensajes/enviados/', views.sent_messages, name='sent_messages'),
     path('mensajes/compose/', views.compose_message, name='compose_message'),
     path('mensajes/<str:username>/', views.private_message, name='private_message'),
+    path('mensajes/eliminar/<int:message_id>/', views.delete_message, name='delete_message'),
 
     # URLs para favoritos
     path('toggle_favorito/<int:receta_pk>/', views.toggle_favorito, name='toggle_favorito'),

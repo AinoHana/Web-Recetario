@@ -30,33 +30,63 @@
         {% if conversations %}
             <div class="conversation-list">
                 {% for other_user, message in conversations.items %}
-                <a href="{% url 'usuarios:private_message' username=other_user.username %}" 
-                   class="conversation-item">
-                    <div class="conversation-flex">
-                        <img src="{% if other_user.perfil.imagen %}{{ other_user.perfil.imagen.url }}{% else %}{% static 'img/default_avatar.png' %}{% endif %}" 
-                             alt="Avatar de {{ other_user.username }}" 
-                             class="avatar">
-                        <div class="content-wrapper">
-                            <div class="title-row">
-                                <h2 class="username">{{ other_user.username }}</h2>
-                                <span class="message-date">
-                                    {{ message.fecha_envio|date:"d M Y" }}
-                                </span>
+                <div class="conversation-item-wrapper">
+                    <a href="{% url 'usuarios:private_message' username=other_user.username %}"
+                       class="conversation-item">
+                        <div class="conversation-flex">
+                            <img src="{% if other_user.perfil.imagen %}{{ other_user.perfil.imagen.url }}{% else %}{% static 'img/default_avatar.png' %}{% endif %}"
+                                 alt="Avatar de {{ other_user.username }}"
+                                 class="avatar">
+                            <div class="content-wrapper">
+                                <div class="title-row">
+                                    <h2 class="username">{{ other_user.username }}</h2>
+                                    <span class="message-date">
+                                        {{ message.fecha_envio|date:"d M Y" }}
+                                    </span>
+                                </div>
+                                {% if message.asunto %}
+                                <p class="message-info">
+                                    <span class="message-info-label">Asunto:</span>
+                                    {{ message.asunto|truncatechars:50 }}
+                                </p>
+                                {% elif message.contenido %}
+                                <p class="message-info">
+                                    <span class="message-info-label">Para:</span>
+                                    {{ message.contenido|truncatechars:50 }}
+                                </p>
+                                {% endif %}
                             </div>
-                            <p class="message-info">
-                                <span class="message-info-label">
-                                    Para: 
-                                </span>
-                                {{ message.contenido|truncatechars:50 }}
-                            </p>
                         </div>
-                    </div>
-                </a>
+                    </a>
+                    <form action="{% url 'usuarios:delete_message' message_id=message.pk %}" method="post" class="delete-form">
+                        {% csrf_token %}
+                        <button type="submit" class="delete-btn" aria-label="Eliminar mensaje">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </form>
+                </div>
                 {% endfor %}
             </div>
+            <!-- Si usas paginación -->
+            {% if page_obj.has_other_pages %}
+            <div class="pagination">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1" class="pagination-link">&laquo; Primera</a>
+                    <a href="?page={{ page_obj.previous_page_number }}" class="pagination-link">Anterior</a>
+                {% endif %}
+                <span class="current-page">
+                    P\u00e1gina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+                </span>
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}" class="pagination-link">Siguiente</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}" class="pagination-link">Última &raquo;</a>
+                {% endif %}
+            </div>
+            {% endif %}
+
         {% else %}
             <p class="empty-message">
-                No has enviado mensajes aún.
+                No has enviado ningún mensaje todavía.
                 <a href="{% url 'usuarios:compose_message' %}" class="link-create">
                     ¡Envía tu primer mensaje!
                 </a>
@@ -107,7 +137,7 @@
     }
 
     .btn-new-message {
-        background-color: #3b82f6;
+        background-color: #0A2540;
         color: #ffffff;
         font-weight: 700;
         padding: 0.5rem 1rem;
@@ -180,24 +210,27 @@
         gap: 1rem;
     }
 
-    .conversation-item {
-        display: block;
+    /* contenedor para el item y el botón de eliminar */
+    .conversation-item-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
         background-color: #f9fafb;
         padding: 1rem;
         border-radius: 0.5rem;
         box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
         transition: box-shadow 0.3s;
+    }
+
+    .conversation-item-wrapper:hover {
+         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    .conversation-item {
+        display: block;
+        flex-grow: 1;
         text-decoration: none;
         color: inherit;
-    }
-
-    .conversation-item:hover {
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    }
-
-    .conversation-item.unread-item {
-        border-left: 4px solid #3b82f6;
-        background-color: #eff6ff;
     }
 
     .conversation-flex {
@@ -234,16 +267,6 @@
         text-overflow: ellipsis;
     }
 
-    .unread-badge {
-        background-color: #ef4444;
-        color: #ffffff;
-        font-size: 0.75rem;
-        font-weight: 700;
-        padding: 0.25rem 0.5rem;
-        border-radius: 9999px;
-        margin-left: 0.5rem;
-    }
-
     .message-date {
         font-size: 0.875rem;
         color: #6b7280;
@@ -264,15 +287,6 @@
         margin-right: 0.25rem;
     }
 
-    .message-body {
-        color: #6b7280;
-        font-size: 0.875rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        margin-top: 0.25rem;
-    }
-
     .empty-message {
         color: #6b7280;
         margin-top: 1rem;
@@ -285,6 +299,55 @@
 
     .link-create:hover {
         text-decoration: none;
+    }
+
+    /* Nuevo bot\u00f3n de eliminar */
+    .delete-form {
+        display: flex;
+        align-items: center;
+    }
+
+    .delete-btn {
+        background: none;
+        border: none;
+        color: #9ca3af;
+        cursor: pointer;
+        font-size: 1.25rem;
+        transition: color 0.2s;
+        padding: 0;
+    }
+
+    .delete-btn:hover {
+        color: #ef4444;
+    }
+
+    /* Paginador */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 1rem;
+        gap: 0.5rem;
+    }
+
+    .pagination-link, .current-page {
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        border: 1px solid #d1d5db;
+        text-decoration: none;
+        color: #4b5563;
+        transition: background-color 0.2s;
+    }
+
+    .pagination-link:hover {
+        background-color: #f3f4f6;
+    }
+
+    .current-page {
+        background-color: #e5e7eb;
+        color: #1f2937;
+        font-weight: 600;
+        cursor: default;
     }
 
     /* Media query para escritorio */
@@ -305,4 +368,51 @@
 
 <!-- Incluimos Font Awesome para iconos -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+
+<!-- Script para manejar la lógica del botón de eliminación -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Seleccionamos todos los formularios de eliminación
+        const deleteForms = document.querySelectorAll('.delete-form');
+
+        deleteForms.forEach(form => {
+            // Añadimos un listener para el evento de envío del formulario
+            form.addEventListener('submit', function(event) {
+                // Prevenimos el comportamiento por defecto de recargar la página
+                event.preventDefault();
+
+                // Obtenemos la URL y el token CSRF del formulario
+                const url = form.getAttribute('action');
+                const csrfToken = form.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+                // Enviamos la solicitud de eliminación de forma asíncrona
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Si la respuesta es exitosa, eliminamos el elemento de la interfaz
+                        const messageItem = form.closest('.conversation-item-wrapper');
+                        if (messageItem) {
+                            messageItem.remove();
+                            console.log("Mensaje eliminado con éxito.");
+                        }
+                    } else {
+                        // Si la respuesta no es exitosa, mostramos un error
+                        console.error('Error al eliminar el mensaje:', response.statusText);
+                    }
+                })
+                .catch(error => {
+                    // Manejamos cualquier error de la red
+                    console.error('Error de red:', error);
+                });
+            });
+        });
+    });
+</script>
 {% endblock %}

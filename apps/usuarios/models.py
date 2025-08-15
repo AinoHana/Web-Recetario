@@ -147,3 +147,4 @@ def is_admin(user):
     Comprueba si el usuario está autenticado y tiene permisos de staff.
     """
     return user.is_authenticated and user.is_staff
+

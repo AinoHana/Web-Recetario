@@ -11,7 +11,7 @@
 
         {# Sección para Crear Nueva Categoría #}
         <h3>Crear Nueva Categoría</h3>
-        <form method="post">
+        <form method="post" action="{% url 'usuarios:favoritos_perfil' %}">
             {% csrf_token %}
             {{ categoria_form.as_p }} {# Renderiza el campo del formulario de categoría #}
             <button type="submit" class="button-primary">Crear Categoría</button>
@@ -24,9 +24,7 @@
                 {% for categoria in categorias_favoritas %}
                     <li>
                         {{ categoria.nombre }}
-                        {# Recordarme: Añadir botones para editar/eliminar categoría aquí #}
-                        {# <button class="button-secondary">Editar</button> #}
-                        {# <button class="button-secondary">Eliminar</button> #}
+                        {# Añadir botones para editar/eliminar categoría aquí #}
                     </li>
                 {% endfor %}
             </ul>
@@ -41,11 +39,23 @@
                 {% for receta_favorita in recetas_favoritas %}
                     <li>
                         <a href="{% url 'recetas_app:detalle_receta' pk=receta_favorita.receta.pk %}">{{ receta_favorita.receta.titulo }}</a>
-                        {% if receta_favorita.categoria %}
-                            <span class="favorite-category-tag">Categoría: {{ receta_favorita.categoria.nombre }}</span>
-                        {% endif %}
-                        {# Recordarme: Añadir botón para eliminar de favoritos aquí #}
-                        {# <button class="button-secondary">Eliminar</button> #}
+
+                        {# Añadimos un formulario para actualizar la categoría de cada receta #}
+                        <form method="post" action="{% url 'recetas_app:actualizar_categoria_favorita' pk=receta_favorita.pk %}" class="inline-form">
+                            {% csrf_token %}
+                            <div class="select-container">
+                                <label for="id_categoria_{{ receta_favorita.pk }}" class="sr-only">Categoría</label>
+                                <select name="categoria" id="id_categoria_{{ receta_favorita.pk }}" onchange="this.form.submit()">
+                                    <option value="" {% if not receta_favorita.categoria %}selected{% endif %}>Sin categoría</option>
+                                    {% for categoria in categorias_favoritas %}
+                                        <option value="{{ categoria.pk }}" {% if receta_favorita.categoria == categoria %}selected{% endif %}>
+                                            {{ categoria.nombre }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </form>
+                        <button class="button-secondary">Eliminar</button>
                     </li>
                 {% endfor %}
             </ul>

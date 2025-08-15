@@ -18,7 +18,21 @@ class PasoInline(admin.TabularInline):
 @admin.register(Receta)
 class RecetaAdmin(admin.ModelAdmin):
     inlines = [IngredienteInline, PasoInline]
-    list_display = ('titulo', 'autor', 'fecha_publicacion', 'categoria', 'is_featured')
+    list_display = ('titulo', 'autor', 'fecha_publicacion', 'categoria', 'receta_de_la_semana_display')
     list_editable = ('is_featured',)
     search_fields = ('titulo', 'descripcion', 'autor__username', 'categoria__nombre')
     list_filter = ('autor', 'fecha_publicacion', 'categoria', 'is_featured')
+
+# Campo calculado para mejorar la visualización en el admin
+    def receta_de_la_semana_display(self, obj):
+        return obj.is_featured
+
+    # Añadimos un 'short_description' para que el encabezado de la columna sea más claro
+    receta_de_la_semana_display.short_description = 'Receta de la Semana'
+
+    # También permitimos ordenar por este campo
+    receta_de_la_semana_display.admin_order_field = 'is_featured'
+
+    # Para que el campo sea editable en la lista, el nombre del campo
+    # 'is_featured' debe estar en 'list_editable'.
+    list_editable = ('is_featured',)

@@ -19,8 +19,9 @@ from django.template.loader import render_to_string
 
 # Importaciones consolidadas de modelos y formularios
 from .models import Receta, Ingrediente, Paso, Comentario, Categoria, RecetaFavorita
+from apps.usuarios.models import CategoriaFavorita
 # Importamos los Formsets y formularios
-from .forms import ComentarioForm, ComentarioEditForm, RecetaForm, IngredienteFormSet, PasoFormSet, CategoriaForm
+from .forms import ComentarioForm, ComentarioEditForm, RecetaForm, IngredienteFormSet, PasoFormSet, CategoriaForm, ActualizarCategoriaForm
 
 # Función para verificar si el usuario es administrador (is_staff)
 def is_admin(user):
@@ -68,7 +69,10 @@ def home(request):
             recetas_list = recetas_list.order_by('-titulo')
 
     # --- Obtener la Receta de la Semana ---
-    receta_de_la_semana = Receta.objects.order_by('?').first() # Receta aleatoria
+    receta_de_la_semana = Receta.objects.filter(is_featured=True).first()
+    # Si no hay ninguna destacada, se toma una aleatoria como fallback
+    if not receta_de_la_semana:
+        receta_de_la_semana = Receta.objects.order_by('?').first()
 
     # --- Obtener Recetas Más Populares (para la sección de la página de inicio) ---
     recetas_populares_home = Receta.objects.annotate(
@@ -78,7 +82,7 @@ def home(request):
     # --- Obtener los IDs de las recetas favoritas del usuario actual ---
     favoritas_ids = set()
     if request.user.is_authenticated:
-        # Usamos .values_list('receta__pk', flat=True) para obtener una lista plana de IDs
+        # Se obtiene directamente a través del related_name 'recetas_favoritas'
         favoritas_ids = set(request.user.recetas_favoritas.values_list('receta__pk', flat=True))
 
     context = {
@@ -459,7 +463,7 @@ def eliminar_comentario(request, pk):
         comentario.delete()
         messages.success(request, 'Comentario eliminado exitosamente.')
         return redirect('recetas_app:detalle_receta', pk=receta_pk)
-    
+
     context = {
         'comentario': comentario,
         'receta': comentario.receta,
@@ -582,7 +586,7 @@ def admin_categorias_ajax(request):
 @login_required
 @user_passes_test(is_admin, login_url='/admin/login/')
 def admin_comentarios_ajax(request):
-    comentarios = Comentario.objects.all().order_by('-fecha_publicacion')
+    comentarios = Comentario.objects.all().order_by('-fecha_creacion')
     context = {'comentarios': comentarios}
     html_content = render_to_string('recetas_app/partials/admin_comentarios_list.html', context, request=request)
     return JsonResponse({'html_content': html_content})
@@ -610,11 +614,11 @@ def crear_usuario(request):
             return redirect('recetas_app:administrar_usuarios')
     else:
         form = UserCreationForm()
-    
+
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         html = render_to_string('recetas_app/crear_usuario.html', {'form': form, 'accion': 'Crear'})
         return JsonResponse({'html_content': html})
-    
+
     return render(request, 'recetas_app/crear_usuario.html', {'form': form, 'accion': 'Crear'})
 
 @login_required
@@ -629,11 +633,11 @@ def editar_usuario(request, pk):
             return redirect('recetas_app:administrar_usuarios')
     else:
         form = UserChangeForm(instance=usuario)
-    
+
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         html = render_to_string('recetas_app/editar_usuario.html', {'form': form, 'usuario': usuario, 'accion': 'Editar'})
         return JsonResponse({'html_content': html})
-    
+
     return render(request, 'recetas_app/editar_usuario.html', {'form': form, 'usuario': usuario, 'accion': 'Editar'})
 
 @login_required
@@ -644,7 +648,7 @@ def eliminar_usuario(request, pk):
         usuario.delete()
         messages.success(request, f'El usuario {usuario.username} ha sido eliminado.')
         return redirect('recetas_app:administrar_usuarios')
-    
+
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         html = render_to_string('recetas_app/confirmar_eliminar_usuario.html', {'usuario': usuario})
         return JsonResponse({'html_content': html})
@@ -782,7 +786,7 @@ def private_message(request, username):
     from apps.usuarios.forms import MensajeForm as PMForm
 
     other_user = get_object_or_404(User, username=username)
-    
+
     messages_between_users = Mensaje.objects.filter(
         Q(remitente=request.user, destinatario=other_user) |
         Q(remitente=other_user, destinatario=request.user)
@@ -804,7 +808,7 @@ def private_message(request, username):
         'messages': messages_between_users,
         'form': form,
     }
-    return render(request, 'recetas_app/private_message.html', context) 
+    return render(request, 'recetas_app/private_message.html', context)
 
 @login_required
 @user_passes_test(is_admin)
@@ -819,21 +823,26 @@ def mis_comentarios(request):
     """
     # Se obtienen todos los comentarios del usuario actual y se ordenan por fecha de creación (los más nuevos primero).
     comentarios = Comentario.objects.filter(autor=request.user).order_by('-fecha_creacion')
-    
+
     context = {
         'comentarios': comentarios
     }
-    
+
     return render(request, 'recetas_app/perfil_mis_comentarios.html', context)
 
-def mis_comentarios(request):
+@login_required
+def actualizar_categoria_favorita(request, pk):
     """
-    Vista que muestra todos los comentarios del usuario actual.
+    Vista que actualiza la categoría de una receta favorita.
     """
-    # Filtra los comentarios para obtener solo los del usuario autenticado
-    comentarios = Comentario.objects.filter(usuario=request.user).order_by('-fecha_creacion')
-    
-    context = {
-        'comentarios': comentarios
-    }
-    return render(request, 'mis_comentarios.html', context)
+    receta_favorita = get_object_or_404(RecetaFavorita, pk=pk, usuario=request.user)
+
+    if request.method == 'POST':
+        form = ActualizarCategoriaForm(request.POST, instance=receta_favorita)
+        if form.is_valid():
+            form.save()
+            return redirect('recetas_app:mis_favoritos')
+
+    # Si la solicitud no es POST, no hacemos nada y la vista original
+    # (mis_favoritos) se encarga de mostrar la página.
+    return redirect('recetas_app:mis_favoritos')

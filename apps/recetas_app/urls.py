@@ -15,6 +15,7 @@ urlpatterns = [
     path('descubre/', views.recetas_aleatorias, name='recetas_aleatorias'),
     path('populares/', views.recetas_populares, name='recetas_mas_populares'),
     path('categoria/<slug:categoria_slug>/', views.recetas_por_categoria, name='recetas_por_categoria'),
+    path('favoritos/actualizar/<int:pk>/', views.actualizar_categoria_favorita, name='actualizar_categoria_favorita'),
 
     # Rutas de Comentarios
     path('comentario/<int:pk>/editar/', views.editar_comentario, name='editar_comentario'),
@@ -54,4 +55,5 @@ urlpatterns = [
     # Rutas para páginas estáticas
     path('acerca-de/', views.acerca_de, name='acerca_de'),
     path('contacto/', views.contacto, name='contacto'),
+
 ]

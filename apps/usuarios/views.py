@@ -161,7 +161,7 @@ def ver_perfil(request):
     }
     return render(request, 'usuarios/ver_perfil.html', context)
 
-# VISTAS DE MENSAJES PRIVADOS (ACTUALIZADAS)
+# VISTAS DE MENSAJES PRIVADOS
 @login_required
 def perfil_usuario(request, username):
     """
@@ -249,7 +249,7 @@ def private_message(request, username):
         Q(remitente=other_user, destinatario=request.user)
     ).order_by('fecha_envio')
 
-    # Marca como le\u00eddos los mensajes recibidos del otro usuario
+    # Marca como leídos los mensajes recibidos del otro usuario
     received_messages = mensajes_privados.filter(destinatario=request.user, is_leido=False)
     received_messages.update(is_leido=True)
 
@@ -271,6 +271,33 @@ def private_message(request, username):
         'form': form,
     }
     return render(request, 'usuarios/private_message.html', context)
+
+@login_required
+def delete_message(request, message_id):
+    """
+    Vista para eliminar un mensaje.
+    Requiere que el usuario est\u00e9 autenticado.
+    """
+    message = get_object_or_404(Mensaje, pk=message_id)
+
+    # Solo el remitente o el destinatario pueden eliminar el mensaje
+    if request.user != message.remitente and request.user != message.destinatario:
+        messages.error(request, "No tienes permiso para eliminar este mensaje.")
+        # Redireccionar a la página de inicio si no tiene permiso
+        return redirect('recetas_app:home')
+
+    if request.method == 'POST':
+        # Determinar a qué página redirigir después de eliminar
+        redirect_url = 'usuarios:inbox'
+        if request.user == message.remitente:
+            redirect_url = 'usuarios:sent_messages'
+
+        message.delete()
+        messages.success(request, "El mensaje ha sido eliminado exitosamente.")
+        return redirect(redirect_url)
+
+    # Si se accede por GET, simplemente redirigir
+    return redirect('usuarios:inbox')
 
 @require_POST
 @login_required

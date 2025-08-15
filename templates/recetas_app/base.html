@@ -34,6 +34,19 @@
     line-height: 1;
     border: 2px solid #0b1f3c;
         }
+
+    .hero-search-input {
+    border:2px solid var(--golden-accent);
+    border-radius:5px;
+    height: 23px;
+    }
+
+.hero-slide-link {
+    display: block; /* Hace que ocupe todo el espacio */
+    text-decoration: none; /* Elimina el subrayado */
+    color: inherit; /* Mantiene el color del texto del padre */
+}
+
     </style>
 </head>
 <body>
@@ -142,32 +155,39 @@
                     </div>
                 </div>
 
-                {# Receta de la Semana en el banner principal #}
-                <div id="slide-daily-recipe" class="hero-slide clickable-slide"
-                    data-background-image="{% if receta_de_la_semana and receta_de_la_semana.imagen %}{{ receta_de_la_semana.imagen.url }}{% else %}{% static 'img/default_daily_recipe_banner.jpg' %}{% endif %}"
-                    data-url="{% if receta_de_la_semana %}{% url 'recetas_app:detalle_receta' pk=receta_de_la_semana.pk %}{% else %}{% url 'recetas_app:home' %}{% endif %}">
+<!-- Receta de la Semana en el banner principal -->
+                {% if receta_de_la_semana %}
+                <a href="{% url 'recetas_app:detalle_receta' pk=receta_de_la_semana.pk %}" class="hero-slide-link">
+                <div id="slide-daily-recipe" class="hero-slide"
+                     data-background-image="{% if receta_de_la_semana and receta_de_la_semana.imagen %}{{ receta_de_la_semana.imagen.url }}{% else %}{% static 'img/default_daily_recipe_banner.jpg' %}{% endif %}">
                     <h2 class="slide-title">Receta de la Semana</h2>
-                    {% if receta_de_la_semana %}
-                        <p class="slide-description">{{ receta_de_la_semana.titulo }} - {{ receta_de_la_semana.descripcion|truncatechars:100 }}</p>
-                    {% else %}
-                        <p class="slide-description">¡Pronto tendremos una deliciosa receta destacada para ti!</p>
-                    {% endif %}
+                    <p class="slide-description">{{ receta_de_la_semana.titulo }} - {{ receta_de_la_semana.descripcion|truncatechars:100 }}</p>
                 </div>
+            </a>
+            {% else %}
+            <div id="slide-daily-recipe" class="hero-slide"
+                 data-background-image="{% static 'img/default_daily_recipe_banner.jpg' %}">
+                <h2 class="slide-title">Receta de la Semana</h2>
+                <p class="slide-description">\u00a1Pronto tendremos una deliciosa receta destacada para ti!</p>
+            </div>
+            {% endif %}
 
-                {# Recetas Populares en el banner principal #}
-                <div id="slide-popular-recipes" class="hero-slide clickable-slide" data-background-image="{% static 'img/popular_recipes_banner.jpg' %}" data-url="{% url 'recetas_app:recetas_mas_populares' %}">
+ <!-- Recetas Populares en el banner principal -->
+                <a href="{% url 'recetas_app:recetas_mas_populares' %}" class="hero-slide-link">
+                <div id="slide-popular-recipes" class="hero-slide" data-background-image="{% static 'img/popular_recipes_banner.jpg' %}">
                     <h2 class="slide-title">Recetas Populares</h2>
-                    <p class="slide-description">Explora las recetas más votadas y comentadas por nuestra comunidad.</p>
+                    <p class="slide-description">Explora las recetas m\u00e1s votadas y comentadas por nuestra comunidad.</p>
                 </div>
-            </div>
-
-            <div class="hero-pagination-dots">
-                <span class="dot active" data-target-slide="slide-search"></span>
-                <span class="dot" data-target-slide="slide-daily-recipe"></span>
-                <span class="dot" data-target-slide="slide-popular-recipes"></span>
-            </div>
+            </a>
         </div>
-    </section>
+
+        <div class="hero-pagination-dots">
+            <span class="dot active" data-target-slide="slide-search"></span>
+            <span class="dot" data-target-slide="slide-daily-recipe"></span>
+            <span class="dot" data-target-slide="slide-popular-recipes"></span>
+        </div>
+    </div>
+</section>
 
     <main class="main-content-new">
         {% block content %}

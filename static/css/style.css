@@ -307,6 +307,10 @@ form.logout-form button.logout-button-new:hover {
     margin-bottom: 20px;
 }
 
+.hero-slide[data-background-image] {
+        background-image: attr(data-background-image url);
+    }
+
 /* Estilo para el slide activo */
 .hero-slide.active-slide {
     display: flex;
@@ -2143,6 +2147,7 @@ Estilos para el modal (sustituto de alert)
         justify-content: flex-end; /* Alinear a la derecha */
     }
 
+
     .hero-title {
         font-size: 40px;
     }
@@ -3229,3 +3234,21 @@ Estilos para el modal (sustituto de alert)
 .delete-link:hover {
     color: #a71d2a;
 }
+
+.btn-new-message {
+        background-color: #0A2540;
+        color: #ffffff;
+        font-weight: 700;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        text-align: center;
+        transition: background-color 0.3s;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        margin-bottom: 1rem;
+        text-decoration: none;
+        display: block;
+    }
+
+    .btn-new-message:hover {
+        background-color: #2563eb;
+    }

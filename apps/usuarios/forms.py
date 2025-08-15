@@ -14,10 +14,6 @@ class RegistroForm(UserCreationForm):
         model = User
         fields = UserCreationForm.Meta.fields + ('first_name', 'last_name', 'email',)
 
-# ==========================================================
-# CAMBIO CLAVE AQUÍ: Se eliminó 'username' y 'last_name' de la lista de campos.
-# El formulario ahora solo valida 'first_name' y 'email'.
-# ==========================================================
 class UserUpdateForm(forms.ModelForm):
     email = forms.EmailField(label='Email')
     first_name = forms.CharField(label='Nombre')

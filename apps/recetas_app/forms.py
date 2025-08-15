@@ -1,6 +1,7 @@
 from django import forms
 from django.forms import inlineformset_factory
-from .models import Receta, Categoria, Comentario, Ingrediente, Paso, Mensaje
+from .models import Receta, Categoria, Comentario, Ingrediente, Paso, Mensaje, RecetaFavorita
+from apps.usuarios.models import CategoriaFavorita
 
 # Formulario para crear/editar recetas
 class RecetaForm(forms.ModelForm):
@@ -42,8 +43,8 @@ PasoFormSet = inlineformset_factory(
     Receta,
     Paso,
     fields=['titulo', 'descripcion'],
-    extra=1, 
-    can_delete=True, 
+    extra=1,
+    can_delete=True,
     widgets={
         'titulo': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Título del Paso'}),
         'descripcion': forms.Textarea(attrs={'class': 'form-textarea', 'rows': 2, 'placeholder': 'Describe este paso...'}),
@@ -91,7 +92,7 @@ class CategoriaForm(forms.ModelForm):
 # Formulario para enviar mensajes privados
 class MensajeForm(forms.ModelForm):
     destinatario = forms.CharField(label="Destinatario", max_length=150, widget=forms.TextInput(attrs={'placeholder': 'Nombre de usuario'}))
-    
+
     class Meta:
         model = Mensaje
         fields = ['destinatario', 'asunto', 'cuerpo']
@@ -104,3 +105,18 @@ class MensajeForm(forms.ModelForm):
         self.fields['destinatario'].widget.attrs.update({'class': 'form-control'})
         self.fields['asunto'].widget.attrs.update({'class': 'form-control'})
         self.fields['cuerpo'].widget.attrs.update({'class': 'form-control'})
+
+class ActualizarCategoriaForm(forms.ModelForm):
+    """
+    Formulario para actualizar la categoría de una RecetaFavorita.
+    """
+    class Meta:
+        model = RecetaFavorita
+        fields = ['categoria']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Aseguramos que el queryset del campo 'categoria' solo contenga
+        # las categorías del usuario al que pertenece el objeto RecetaFavorita.
+        if self.instance:
+            self.fields['categoria'].queryset = CategoriaFavorita.objects.filter(user=self.instance.user)

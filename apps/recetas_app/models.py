@@ -35,6 +35,13 @@ class Receta(models.Model):
     porciones = models.IntegerField(blank=True, null=True)
     is_featured = models.BooleanField(default=False, verbose_name="¿Receta de la Semana?")
 
+    def save(self, *args, **kwargs):
+        if self.is_featured:
+            Receta.objects.filter(is_featured=True).exclude(pk=self.pk).update(is_featured=False)
+
+        # Llama al método save original para guardar los cambios.
+        super().save(*args, **kwargs)
+
     class Meta:
         ordering = ['-fecha_publicacion']
         verbose_name_plural = "Recetas"
